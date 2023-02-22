@@ -1,0 +1,141 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Computational Reproducibility Cookbook},
+  pdfauthor={Daniel H. Baker, University of York},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Computational Reproducibility Cookbook}
+\author{Daniel H. Baker, University of York}
+\date{2023-02-15}
+
+\begin{document}
+\maketitle
+
+\hypertarget{intro}{%
+\section{Intro}\label{intro}}
+
+\hypertarget{background-on-reproducibility}{%
+\subsection{Background on reproducibility}\label{background-on-reproducibility}}
+
+\hypertarget{five-levels-of-computational-reproducibility}{%
+\section{Five levels of computational reproducibility}\label{five-levels-of-computational-reproducibility}}
+
+\hypertarget{implementation}{%
+\section{Implementation}\label{implementation}}
+
+\hypertarget{flags-for-level-of-analysis}{%
+\subsection{Flags for level of analysis}\label{flags-for-level-of-analysis}}
+
+\hypertarget{markdown-file-structure}{%
+\subsection{Markdown file structure}\label{markdown-file-structure}}
+
+one big chunk, all at start, interleaved throughout
+
+\hypertarget{automating-figure-generation}{%
+\subsection{Automating figure generation}\label{automating-figure-generation}}
+
+\hypertarget{data-downloading}{%
+\subsection{Data downloading}\label{data-downloading}}
+
+\hypertarget{package-management}{%
+\subsection{Package management}\label{package-management}}
+
+renv and automatic activation
+
+\hypertarget{python-chunks}{%
+\subsection{Python chunks}\label{python-chunks}}
+
+\hypertarget{command-line-and-matlab-functions}{%
+\subsection{Command line and matlab functions}\label{command-line-and-matlab-functions}}
+
+\hypertarget{output-formats}{%
+\subsection{Output formats}\label{output-formats}}
+
+\hypertarget{github-syncing}{%
+\subsection{Github syncing}\label{github-syncing}}
+
+\hypertarget{an-example}{%
+\section{An example:}\label{an-example}}
+
+Uploading data
+Downloading data
+Analysis and embedding code in text
+Autogenerating figures
+Github syncing
+Renv
+
+\hypertarget{modality-specific-issues}{%
+\section{Modality-specific issues}\label{modality-specific-issues}}
+
+MRI, manual analyses
+
+\end{document}

@@ -1,0 +1,75 @@
+---
+title: "Computational Reproducibility Cookbook"
+author: "Daniel H. Baker, University of York"
+date: "2023-02-15"
+output: 
+  html_document: default
+  word_document: default
+  pdf_document:
+    toc: no
+  bookdown::pdf_document2:
+    fig_caption: yes
+    toc: no
+    keep_tex: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intro
+
+This document contains notes describing a process for making scientific papers computationally reproducible. It is written in R markdown, and intended to serve as a handbook for the 'ReproduceMe' pilot project at the University of York.
+
+## Background on reproducibility
+
+
+
+# Five levels of computational reproducibility
+
+Level 0 - the study is not computationally reproducible, usually because code and/or data are unavailable
+
+Level 1 - a single script conducts the analysis using local raw or preprocessed data that is manually downloaded
+
+Level 2 - a single script automatically downloads and analyses raw or preprocessed data, and produces a formatted output containing values that can be incorporated into a paper
+
+Level 3 - a single script automatically downloads and analyses all raw data, generates all tables and figures, and produces a pdf of the entire manuscript
+
+Level 4 - all code is embedded in a Docker container (or similar) that includes the software required to run (e.g. specific package versions, and versions of the programming environment)
+
+# Implementation
+
+## Flags for level of analysis
+
+## Markdown file structure
+one big chunk, all at start, interleaved throughout
+
+## Automating figure generation
+
+## Data downloading
+
+## Package management 
+renv and automatic activation
+
+## Python chunks
+
+## Command line and matlab functions
+
+## Output formats
+
+## Github syncing
+
+
+# An example:
+
+Uploading data
+Downloading data
+Analysis and embedding code in text
+Autogenerating figures
+Github syncing
+Renv
+
+# Modality-specific issues
+MRI, manual analyses
+
+
