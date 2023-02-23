@@ -1,7 +1,7 @@
 ---
 title: "Computational Reproducibility Cookbook"
 author: "Daniel H. Baker, University of York"
-date: "2023-02-15"
+date: "`r Sys.Date()`"
 output: 
   bookdown::pdf_document2:
     fig_caption: yes
@@ -22,11 +22,11 @@ if (!dir.exists('local/')){dir.create('local')}
 
 # Intro
 
-This document contains notes describing a process for making scientific papers computationally reproducible. It is written in R markdown, and intended to serve as a handbook for the 'ReproduceMe' pilot project at the University of York (in 2023). Most of the examples here involve R, as we anticipate using R for most projects, however many of the same things can be achieved in other languages.
+This document contains notes describing a process for making scientific papers computationally reproducible. It is written in R markdown, and intended to serve as a handbook for the 'ReproduceMe' pilot project at the University of York in 2023. Most of the examples here involve R, as we anticipate using R for most projects, however many of the same things can be achieved in other languages.
 
 ## Background on reproducibility
 
-The goal of computational reproducibility is that all of the analyses in a paper can be reconstructed. For modelling and simulation papers, this requires sharing of code. For empirical papers it requires sharing of both code and data. Although data sharing has become commonplace in recent years, researchers appear to be much less willing to share analysis code. This could be for any number of reasons, such as fear that they have made an error, or lack of confidence in their own coding skills. It could also be simply be that current norms in most fields do not require code sharing. However making one's work reproducible has numerous benefits, including increasing the transparency of the analysis, and the confidence of readers, reviewers and editors. Other researchers can then use parts of an analysis pipeline in their own work, speeding up scientific progress. Finally, it is potentially the case that a reproducible workflow potentially benefits the authors themselves if they wish to revisit their analysis in the future.
+The goal of computational reproducibility is that all of the analyses in a paper can be reconstructed. For modelling and simulation papers, this requires sharing of code. For empirical papers it requires sharing of both code and data. Although data sharing has become commonplace in recent years, researchers appear to be much less willing to share analysis code. This could be for any number of reasons, such as fear that they have made an error, or lack of confidence in their own coding skills. It could also be simply be that current norms in most fields do not require code sharing. However making one's work reproducible has numerous benefits, including increasing the transparency of the analysis, and the confidence of readers, reviewers and editors. Other researchers can then re-use parts of an analysis pipeline in their own work, speeding up scientific progress. Finally, it is potentially the case that a reproducible workflow benefits the authors themselves if they wish to revisit or reconstruct their own analysis in the future.
 
 # Five levels of computational reproducibility
 
@@ -73,15 +73,15 @@ text(1.3,0.9,'Reproducible environment',adj=0.5,cex=cexlist[2])
 
 **Level 3** - a single script automatically downloads and analyses all raw data, generates all tables and figures, and produces a pdf of the entire manuscript (note that this script may execute other scripts, e.g. in different programming languages). This is a more impressive solution, as it is clear precisely where all of the values reported in the paper have come from, and how the figures were constructed. It can be substantially more work to get to this stage, but if the paper is already written then converting to an executable format is largely procedural. The journal [eLife](https://elifesciences.org/) piloted something along these lines a few years ago, though it seems to have been forgotten about now.
 
-**Level 4** - all code is embedded in a Docker container (or similar) that includes the software required to run (e.g. specific package versions, and versions of the programming environment). This would be extremely technically challenging to do from scratch. However fortunately there are some useful tools already available. The [Rocker](https://rocker-project.org/) project provides standard Docker containers for R studio, which can be downloaded and used as a wrapper for the entire computational environment. I have not tried doing this yet, but there is plenty of documentation, and also a useful paper by @Peikert2021 that explains how to go about it. A less extreme version is to use the [*renv*](https://rstudio.github.io/renv/articles/renv.html) package to manage package versions in R.
+**Level 4** - all code is embedded in a Docker container (or similar) that includes the software required to run (e.g. specific package versions, and versions of the programming environment). This would be extremely technically challenging to do from scratch. However fortunately there are some useful tools already available. The [Rocker](https://rocker-project.org/) project provides standard Docker containers for R studio, which can be downloaded and used as a wrapper for the entire computational environment. I have not tried doing this yet, but there is plenty of documentation, and also a useful paper by @Peikert2021 that explains how to go about it. A less extreme version is to use the [*renv*](https://rstudio.github.io/renv/articles/renv.html) package to manage package versions in R (more on this below).
 
-Discussions about which level to aim for should be had with the study authors before work begins on making things reproducible. It is always easier to program something when the goal is clear, and there may be idiosyncracies specific to an individual study that means that Level 3 or 4 is not practical. Sometimes there are also restrictions on sharing of raw data (e.g. where this could potentially be used to identify a participant), and in such cases we might aim for reproducibility based on preprocessed or de-identified data. All of this is totally fine - for this pilot project our goal is simply to make things more reproducible than Level 0, so we need to be pragmatic rather than puritanical.
+Discussions about which level to aim for should be had with the study authors before work begins on making materials reproducible. It is always easier to program something when the goal is clear, and there may be idiosyncracies specific to an individual study that means that Level 3 or 4 is not practical. Sometimes there are also restrictions on sharing of raw data (e.g. where this could potentially be used to identify a participant), and in such cases we might aim for reproducibility based on preprocessed or de-identified data. All of this is totally fine - for this pilot project our goal is simply to make things more reproducible than Level 0, so we need to be pragmatic rather than puritanical.
 
 # Implementation
 
 ## *R Markdown* is really good
 
-[Markdown](https://www.markdownguide.org/) is a generic convention for document formatting. R Markdown takes this basic concept and integrates it into the R environment. This means you can produce a single script that contains both text and computer code. When the script is executed the code runs too, meaning that analyses can be conducted, and an output document is generated. It is possible to automate all parts of an analysis pipeline in this way, with different sections of the code importing and processing the data, generating figures, and formatting the output in the style of a paper. You can then 'knit' the markdown file to a variety of formats including pdf, Word documents, html and epub. Similar systems exist for other programming languages, including [Jupyter notebooks](https://jupyter.org/) for Python, and [Matlab live scripts](https://uk.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html). We now have several examples of full papers written in R Markdown, available at the following repositories:
+[Markdown](https://www.markdownguide.org/) is a generic convention for document formatting. R Markdown takes this basic concept and integrates it into the R environment. This means you can produce a single script that contains both text and computer code. When the script is executed the code runs too, meaning that analyses can be conducted, and an output document is generated. It is possible to automate all parts of an analysis pipeline in this way, with different sections of the code importing and processing the data, generating figures, and formatting the output in the style of a paper. You can then 'knit' the markdown file to a variety of formats including pdf, Word documents, html and epub. Similar systems exist for other programming languages, including [Jupyter notebooks](https://jupyter.org/) for Python, and [Matlab live scripts](https://uk.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html). We now have several examples of full papers written in R Markdown, available at the following repositories (these are clickable hyperlinks):
 
 [Baker (2021)](https://github.com/bakerdh/FourierStats)
 
@@ -95,11 +95,11 @@ In each case, the Rmd file contains the markdown script that will auto-generate 
 
 ## Markdown file structure
 
-There is no set structure for Markdown files, which can interleave chunks of text, code, tables and images in any order. However it is sensible to follow some basic design principles to make documents easier to navigate. In principle we could include all of the R code at the start of the file, and all of the text for the manuscript below it. However this makes it quite difficult to find different sections of code. Instead it is better to break the analysis up into several distinct chunks of code, and scatter these throughout the manuscript in appropriate locations. The caveat here is that if we wish to embed values from some analysis, or figures that have been automatically generated, these things need to happen before we try to use the results in the text. In RStudio, section headings (created using either a single or double hash symbol) allow the user to navigate easily through the document via the menu in the lower left hand corner of the script window.
+There is no set structure for Markdown files, which can interleave chunks of text, code, tables and images in any order. However it is sensible to follow some basic design principles to make documents easier to navigate. In principle we could include all of the R code at the start of the file, and all of the text for the manuscript below it. However this sometimes makes it quite difficult to find different sections of code. Instead it is better to break the analysis up into several distinct chunks of code, and scatter these throughout the manuscript in appropriate locations. The caveat here is that if we wish to embed values from some analysis, or figures that have been automatically generated, these things need to happen before we try to use the results in the text. In RStudio, section headings (created using either a single or double hash symbol) and code chunk names allow the user to navigate easily through the document via the menu in the lower left hand corner of the script window.
 
-A chunk of R code is initiated with three reverse ticks (I can't get these to render properly in the markdown system, but it's ASCII code 96), followed by the letter r in curly brackets, and terminated with three more reverse ticks. Here is an example:
+A chunk of R code is initiated with three reverse ticks (I can't get these to render properly in the markdown system, but it's ASCII code 96), followed by the letter r (and optionally a name for the code chunk) in curly brackets, and terminated with three more reverse ticks. Here is an example:
 
-```{r}
+```{r basicchunk}
 
 a <- 10.3
 
@@ -111,7 +111,7 @@ It is also possible to include pieces of 'inline' code as part of a markdown doc
 
 ## Flags to specify the level of analysis
 
-Some analysis pipelines can become very complicated, requiring substantial storage space, and taking a long time to execute. In such cases I have found it helpful to set a flag (normally called *processdata*) at the start of the script to control the level of detail that the analysis is performed at. The flag is hierarchical, in that setting it to a value of 2 implies that the operations from levels 0 and 1 will also be executed. Whilst this will vary across studies, one possibility is as follows:
+Some analysis pipelines can become very complicated, requiring substantial storage space, and taking a long time to execute. In such cases I have found it helpful to set a flag (normally called *processdata*) at the start of the script to control the level of detail that the analysis is performed at. The flag is hierarchical, in that setting it to a value of 2 implies that the operations from levels 0 and 1 will also be executed. Whilst this will vary across studies, one possible convention is as follows:
 
 `processdata <- 0`: This means that no data are processed, and the manuscript is compiled using data that have already been analysed. The appropriate files are downloaded from the OSF (or other repository) if they are not available locally. This mode is particularly useful when writing a manuscript in markdown, as one can see the typeset text rapidly without waiting for analyses to execute.
 
@@ -119,17 +119,17 @@ Some analysis pipelines can become very complicated, requiring substantial stora
 
 `processdata <- 2`: Here we conduct 'second level' analyses that do not take a long time, for example statistical testing, using processed data and/or model outputs. These operations might require processed data files for individual participants, such as participant level averages of the dependent variable(s). An example for EEG might be the participant's average ERP waveforms for each trial.
 
-`processdata <- 3`: The highest value for the flag specifies that all data should be downloaded and analysed from the lowest level available. Ideally this will be the raw data files recorded during an experiment. At this level of analysis we also perform any time-consuming analysis procedures, such as model fitting, bootstrapping, and so on. The outputs of all of these analyses are stored in an intermediate data file that allows the lower values of *processdata* to skip the resource-intensive analysis steps. This data file should also be stored in the project's online (i.e. OSF) repository so that it can be downloaded directly if the user does not have the resources available for the full analysis.
+`processdata <- 3`: The highest value for the flag specifies that all data should be downloaded and analysed from the lowest level available. Ideally this will be the raw data files recorded during an experiment. At this level of analysis we also perform any time-consuming analysis procedures, such as model fitting, bootstrapping, and so on. The outputs of all of these analyses are stored in an intermediate data file that allows the lower values of *processdata* to skip the resource-intensive analysis steps. This data file should also be stored in the project's online repository (i.e. OSF) so that it can be downloaded directly if the user does not have the resources available for the full analysis.
 
 Different sections of code throughout the script begin with *if* statements that evaluate the *processdata* flag, and only execute their code segment if required. At the start of the script I include comments that specify what each level of the flag will do, and usually estimates of the time and storage space required, so that the user can make an informed decision about what they want to do.
 
 ## Downloading data and other resources
 
-R has a native function called *download.file* that can be used to copy files from the internet to the local computer. This is fine if you have a small number of files to download and they all have static URLs that are unlikely to change. However most of the time we are more likely to store files in a repository such as the Open Science Framework site. The [*osfr](https://cran.r-project.org/package=osfr) package provides some useful tools for uploading, downloading, and also indexing OSF repositories. All you need to know is the five character identifier for the repository you are interested in. For example, for the repository [https://osf.io/kthg3/](https://osf.io/kthg3/) the five character code is the last part of the URL: kthg3
+R has a native function called *download.file* that can be used to copy files from the internet to the local computer. This is fine if you have a small number of files to download and they all have traditional static URLs that are unlikely to change. However most of the time we are more likely to store files in a repository such as the Open Science Framework site. The [*osfr*](https://cran.r-project.org/package=osfr) package provides some useful tools for uploading, downloading, and also indexing OSF repositories. All you need to know is the five character identifier for the repository you are interested in. For example, for the repository [https://osf.io/kthg3/](https://osf.io/kthg3/) the five character code is the last part of the URL: kthg3
 
 The first thing we need to do is index the root repository and see what files it contains:
 
-```{r, include=TRUE}
+```{r repositoryindexing, include=TRUE}
 
 library(osfr)
 
@@ -140,17 +140,17 @@ filelist
 
 ```
 
-We can then download any of the files we might need, for example:
+We can then download any of the files we might need, for example this line of code will donwload the first file in the list:
 
-```{r, include=TRUE}
+```{r OSFdownloading, include=TRUE, eval=FALSE}
 
 osf_download(filelist[1,])
 
 ```
 
-You can specify the local directory where you want to store the file (more on that in the next section). I usually use text matching on the file names to identify the files I need, e.g.:
+The main thing we are likely to download is data for analysis, but we could also download additional scripts, images, or anything else required for running the analysis. You can specify the local directory where you want to store the file (more on that in the next section). I usually use text matching on the file names to identify the files I need, e.g.:
 
-```{r, include=TRUE}
+```{r OSfdownloading2, include=TRUE, eval=FALSE}
 
 id <- pmatch('2011datalong.csv',filelist$name)
 # only download the file if it doesn't already exist
@@ -160,11 +160,11 @@ osf_download(filelist[id,],'local/')
 
 ```
 
-There are also functions in the *osfr* package to enable automated uploading of files, which I find more stable than the drag and drop web interface. In order to upload files (or download them from private repositories) you need to provide an authentication key. However it is possible to download files from any public repository without requiring any log in details or authentication (as above), so our markdown files should work on any machine with internet access.
+Note that we should avoid repeatedly downloading files that are already present locally, for example by using an *if* statement as above. There are also functions in the *osfr* package to enable automated uploading of files, which I find more stable than the drag and drop web interface. In order to upload files (or download them from private repositories) you need to provide an authentication key. However it is possible to download files from any public repository without requiring any log in details or authentication (as above), so our markdown files should work on any machine with internet access.
 
 ## Local file management
 
-When we download files, we need to store them somewhere sensible. I like having a directory in the project folder called something like */local* or */temp*, and then organising this into sensible subdirectories, such as */rawdata* and */processeddata*. Below we will introduce Github, which has quite strict storage limitations. Rather than syncing these directories of local files to Github, we can add the path to a file called .gitignore, which means that *git* will not try to sync it. Other subdirectories might also be useful, including */Figures* and */scripts*, depending on the files that are required to run the analysis. Note that it is generally a bad idea to use absolute referencing for file locations, for example including a path such as `C:\user\daniel\Documents` will not work on all devices. We will check that scripts work on multiple operating systems (Mac, Windows, Linux) to avoid any obvious problems.
+When we download files, we need to store them somewhere sensible. I like having a directory in the project folder called something like */local* or */temp*, and then organising this into sensible subdirectories, such as */rawdata* and */processeddata*. Below we will introduce Github, which has quite strict storage limitations. Rather than syncing these (potentially very large) directories of local files to Github, we can add the path to a file called .gitignore, which means that *git* will not try to sync it. Other subdirectories might also be useful, including */Figures* and */scripts*, depending on the files that are required to run the analysis. Note that it is generally a bad idea to use absolute referencing for file locations, for example including a path such as `C:\user\daniel\Documents` will not work on all devices. During the ReproduceMe project, we will check that scripts work on multiple operating systems (Mac, Windows, Linux) to avoid any obvious problems.
 
 ## Automating figure generation
 
@@ -172,39 +172,39 @@ One of my favourite things about R is that it can produce really excellent publi
 
 With this in mind, my advice would be to use the *pdf* function when plotting figures, so that the output is saved to a pdf file (related functions such as *ps* and *tiff* can be used in the same way if other file formats are required). We open a new pdf file like this:
 
-```{r, include=TRUE, eval=FALSE}
+```{r outputtopdf, include=TRUE, eval=FALSE}
 pdf('Figures/myfigure.pdf', bg="transparent", height = 8, width = 8)
 ```
 
 Then we call whatever plotting functions we want to to generate our figure. I tend to do this using base R plotting functions, though many people use the *ggplot2* library. There are methods for splitting a figure up into multiple sub-panels, such as by using the *par* function. For example:
 
-```{r, include=TRUE, eval=FALSE}
+```{r plotgridsetup, include=TRUE, eval=FALSE}
 par(mfcol=c(1,3))
 ```
 
-specifies a 1 row by 3 column plot layout. Each new plot appears in a different location within this grid. Once we are finished plotting, we close the file with:
+specifies a 1 row by 3 column plot layout. New plots appear in successive locations within this grid. Once we are finished plotting, we close the file with:
 
-```{r, include=TRUE, eval=FALSE}
+```{r closefigure, include=TRUE, eval=FALSE}
 dev.off()
 ```
 
 Finally, at the appropriate place in the text we can include our figure:
 
-```{r, include=TRUE, eval=FALSE}
+```{r inserfigure, include=TRUE, eval=FALSE}
 
 knitr::include_graphics('Figures/myfigure.pdf')
 
 ```
 
-Notice how this interacts with the *processdata* flag we talked about above. At the lowest level (*processdata* = 0) the figures don't get generated at all, but since they exist as independent files they can still be loaded in when creating the manuscript.
+Notice how this might interact with the *processdata* flag we talked about above. At the lowest level (*processdata* = 0) the figures won't get generated at all, but since they exist as independent files they can still be loaded in when creating the manuscript.
 
-For really complicated plots with irregular layouts, it's sometimes necessary to do things in a slightly different way, e.g. by combining multiple postscript files and raster images at arbitrary locations. I explain how to do this in the plotting chapter (Ch 18) of my R book, which is available at: [https://eprints.whiterose.ac.uk/181926/](https://eprints.whiterose.ac.uk/181926/)
+For really complicated plots with irregular layouts, it's sometimes necessary to do things in a slightly different way, e.g. by combining multiple postscript files and raster images at arbitrary locations. I explain how to do this in the plotting chapter (Ch 18) of my R book, which is available at: [https://eprints.whiterose.ac.uk/181926/](https://eprints.whiterose.ac.uk/181926/). And often in papers we need to generate a diagram in a different piece of software, like Adobe Illustrator. It's totally fine to import things like this as graphics, rather than generate them automatically.
 
 ## Package management
 
 The package management system in R is excellent, in that most of what we might need is available from a single repository ([CRAN](https://cran.r-project.org/)), and is stored consistently in a common library on the host computer. However package installation and activation is a little cumbersome. The *install.packages()* function will force install packages even if they are already present on the computer, which wastes a lot of time if it happens each time the script is run. I use the following code to check which required packages are present, install those that are missing, and activate everything:
 
-```{r, include=TRUE, eval=FALSE}
+```{r packageactivation, include=TRUE, eval=FALSE}
 
 packagelist <- c('knitr','remotes','tictoc','R.matlab') # list of CRAN packages
 
@@ -218,11 +218,11 @@ invisible(lapply(toinstall,library,character.only=TRUE))
 
 ```
 
-However the above code will install the most recent package versions. Over time, packages get updated (along with the R language itself), and there is a risk that code will develop bugs as a consequence. An alternative is the [*renv*](https://rstudio.github.io/renv/articles/renv.html) package, which takes a snapshot of the precise package versions that are being used. This requires some minimal lines of code.
+However the above code will install the most recent package versions. Over time, packages get updated (along with the R language itself), and there is a risk that code will develop bugs as a consequence. An alternative approach is the [*renv*](https://rstudio.github.io/renv/articles/renv.html) package, which takes a snapshot of the precise package versions that are being used. This requires some minimal lines of code.
 
 1. Initialise an *renv* 'lock' file to store package information in:
 
-```{r, include=TRUE, eval=FALSE}
+```{r renv1, include=TRUE, eval=FALSE}
 
 renv::init()
 
@@ -230,15 +230,15 @@ renv::init()
 
 2. Once you have activated all the packages required for the project, take a snapshot and save it to the lock file:
 
-```{r, include=TRUE, eval=FALSE}
+```{r renv2, include=TRUE, eval=FALSE}
 
 renv::snapshot()
 
 ```
 
-3. The above lines of code only need to be called when we first set up the project, after which they could be commented out from the script. If the lock file is included as part of the project, the environment can then be restored with:
+3. The above lines of code only need to be called when we first set up the project, after which they could be commented out in the script. If the lock file is included as part of the project, the environment can then be restored with:
 
-```{r, include=TRUE, eval=FALSE}
+```{r renv3, include=TRUE, eval=FALSE}
 
 renv::restore()
 
@@ -250,13 +250,13 @@ This solution isn't perfect, for example it doesn't control the R version being 
 
 It is possible to include sections of Python code in an R markdown document. This might be useful if one needs to access Python libraries and toolboxes. It requires the [*reticulate*]() package to be available, through which it is possible to specify which Python version you wish to use on your machine (it must already have been installed). A python code chunk resembles an R code chunk, and is initiated by three reverse ticks followed by `{python}` (and terminated with three more reverse ticks). Within a python code chunk it is possible to import packages from the local python instance in the usual way, and conduct any Python analyses.
 
-The Python instance has a sandboxed area of memory that cannot directly access the variables in the R Environment. However a special R variable is created called *py* that stores any Python variables as subfields. So a variable called *pyvar* in the Python code can be accessed in R as `py$pyvar`. Similarly, creating a new field of the *py* variable, such as `py$Rdata` will cause a variable called *RData* to appear in the Python memory. In this way it is possible to pass information between R and Python. It is a little more clunky than having a shared memory, but presumably necessary for technical reasons (i.e. to do with different data types). It is possible to do something similar for other languages, including Julia, C++, JavaScript, bash and SQL. I haven't tried this, but apparently it's also possible to use Octave in this way, which is an open source Matlab alternative. If we end up with some Matlab code that we can't translate to R, this might be a useful option.
+The Python instance has a sandboxed area of memory that cannot directly access the variables in the R Environment. However a special R variable is created called *py* that stores any Python variables as subfields. So a variable called *pyvar* in the Python code can be accessed in R as `py$pyvar`. Similarly, creating a new field of the *py* variable, such as `py$Rdata` will cause a variable called *Rdata* to appear in the Python memory. In this way it is possible to pass information between R and Python. It is a little more clunky than having a shared memory, but presumably necessary for technical reasons (i.e. to do with different data types). It is possible to do something similar for other languages, including Julia, C++, JavaScript, bash and SQL. I haven't tried this, but apparently it's also possible to use Octave in this way, which is an open source Matlab alternative. If we end up with some Matlab code that we can't translate to R, this might be a useful option.
 
 ## Calling Matlab and other functions from the command line
 
-Frustratingly, it is not possible to directly access the Matlab kernel through Markdown. There is a workaround, which is to create a Matlab script and send this directly to Matlab via the terminal. Annoyingly there is no way to directly store the outputs in R's memory (though they do get echoed to the console if you omit the semicolons at the end of each line), so the script will need to save any outputs to an external file, which would then be read back in by R. However this does permit access to Matlab-only toolboxes that might be critical for some analyses. It is also necessary to tell the terminal exactly where Matlab exists on the machine, which will probably need to be altered by the user. Here is some example code that generates a simple Matlab script, and then executes it via the terminal:
+Frustratingly, it is not possible to directly access the Matlab kernel through Markdown in the way we can with Python. There is a workaround, which is to create a Matlab script and send this directly to Matlab via the terminal. Annoyingly there is no way to directly store the outputs in R's memory (though they do get echoed to the console if you omit the semicolons at the end of each line), so the script will need to save any outputs to an external file, which would then be read back in by R. This is not ideal, but it does enable access to Matlab-only toolboxes that might be critical for some analyses. It is also necessary to tell the terminal exactly where Matlab exists on the machine, which will probably need to be altered by the user. Here is some example code that generates a simple Matlab script, and then executes it via the terminal:
 
-```{r, include=TRUE, eval=FALSE}
+```{r matlabscripting, include=TRUE, eval=FALSE}
 
 # build the matlab script
 line1 <- "a = 1:3:30;"
@@ -287,9 +287,9 @@ It should be possible to use a similar approach to call other programs that are 
 
 ## Output formats
 
-There are a wide array of possible output formats available when using Markdown. However the most useful are pdf, HTML and Microsoft Word. I include the following code in the header information of every Markdown file. RStudio then makes all three file formats available in the dropdown menu next to the 'Knit' button at the top of the script.
+There are a wide array of possible output formats available when using Markdown. The most useful are pdf, HTML and Microsoft Word. I include the following code in the header information of every Markdown file. RStudio then makes all three file formats available in the dropdown menu next to the 'Knit' button at the top of the script.
 
-```{r, include=TRUE, eval=FALSE}
+```{r outputformats, include=TRUE, eval=FALSE}
 
 bookdown::pdf_document2:
   fig_caption: yes
@@ -300,38 +300,214 @@ html_document: default
 
 ```
   
-Note that *pdf_document2* from the *bookdown* package seems to work much better than the default *pdf_document*, which can't cope with figure numbering for some reason. Actually Word and HTML documents also don't seem to handle figure referencing properly either, but they can sometimes be useful.
+Note that *pdf_document2* from the *bookdown* package seems to work much better than the default *pdf_document*, which can't cope with figure numbering for some reason. Actually Word and HTML documents also don't seem to handle figure referencing properly either, but we need them sometimes.
 
 ## Typesetting equations using LaTeX
 
-When Markdown creates pdf files as output, it actually uses [\LaTeX{}](https://www.latex-project.org/) (pronounced 'laytech', or sometimes 'laatech'). This is a document typesetting system very popular in the mathematical sciences because it is good at typesetting equations, and it is possible to incorporate pieces of \LaTeX{} code into a Markdown file (such as the fancy text in this paragraph for the word Latex). Some journals also accept \LaTeX{} files for submission. A full overview of how to use LaTeX is beyond the scope of this document. However it is straightfoward to incorporate a simple equation between pairs of dollar symbols. For example, the code `$y = \sqrt{x^2}$` generates the equation: $y = \sqrt{x^2}$.
+When Markdown creates pdf files as output, it actually uses [\LaTeX{}](https://www.latex-project.org/) (pronounced 'laytech', or sometimes 'laatech'). This is a document typesetting system very popular in the mathematical sciences because it is good at typesetting equations, and it is possible to incorporate pieces of \LaTeX{} code into a Markdown file (such as the fancy text in this paragraph for the word Latex). Some journals also accept \LaTeX{} files for submission. A full overview of how to use LaTeX is beyond the scope of this document. However it is possible to incorporate equations and mathematical symbols between pairs of dollar signs For example, the code `$y = \sqrt{x^2}$` generates the equation: $y = \sqrt{x^2}$.
 
 ## Citations and automatic figure and equation referencing
 
 We can include citations using a BibTex file containing the references. This can be exported from most reference management software (e.g. [Zotero](https://www.zotero.org/)), or created in a native BibTex package such as [BibDesk](https://bibdesk.sourceforge.io/). We specify the reference file in the header information of the markdown file:
 
-```{r, include=TRUE, eval=FALSE}
+```{r referencefile, include=TRUE, eval=FALSE}
 
 bibliography: references.bib
 
 ```
 
-Then, we can cite a paper either inline as `@Peikert2021`, which renders as @Peikert2021, or in square brackets as `[@Peikert2021]`, which renders as [@Peikert2021]. The bibliography appears at the end of the pdf file.
+Then, we can cite a paper either inline as `@Peikert2021`, which renders as @Peikert2021, or in square brackets as `[@Peikert2021]`, which renders as [@Peikert2021]. The bibliography appears at the end of the pdf file (see below). We can set the style of the bibliography using a csl style file. The eLife style is used for this document; it needs to be in the project directory, and is specified at the top of the markdown script:
 
-Similarly we can reference figures by giving them a tag. For example the pyramid figure has the tag *repropyramid*, so we can reference it with `\@ref(fig:repropyramid)`, which renders as Figure \@ref(fig:repropyramid). Equations work similarly but with an independent numbering system from the figures, indexed by the *eqn:* tag.
+```{r stylefile, include=TRUE, eval=FALSE}
+
+csl: elife.csl
+
+```
+
+Similarly we can reference figures by giving them a tag. For example the pyramid figure has the tag *repropyramid*, so we can reference it with `\@ref(fig:repropyramid)`, which renders as Figure \@ref(fig:repropyramid). Equations work similarly but with an independent number sequence from the figures, indexed by the *eqn:* tag.
 
 ## Github syncing
 
-Github is a useful tool for version management and online code storage. It integrates well with OSF and RStudio. If we set up a new public repository on the Github website, we can pull it down to our local computer in RStudio by choosing File: New Project. Select Version Control and then Git. It turns out that Github changed the way to interface with repositories, so much of the information online is out of date. The correct format for the repository URL is: `git@github.com:bakerdh/ReproduceMe.git`
+Github is a useful tool for version management and online code storage. It integrates well with both OSF and RStudio. If we set up a new public repository on the Github website, we can pull it down to our local computer in RStudio by choosing File: New Project. Select Version Control and then Git. It turns out that Github changed the way to interface with repositories, so much of the information online is out of date. The correct format for the repository URL is: `git@github.com:bakerdh/ReproduceMe.git`
 
-The files will download, and we can then make modifications and then synchronise back to the repository by Committing and then Pushing in the Git tab (upper right pane in RStudio). There's a lot more that Github can do, but frankly I don't really understand it, and it's beyond what we'll need for this project.
+The files will download, and we can then make modifications and synchronise back to the repository by Committing and then Pushing in the Git tab (upper right pane in RStudio). There's a lot more that Github can do, but frankly I don't really understand it, and it's beyond what we'll need for this project.
 
-# An example:
+## Modality-specific issues
 
-Uploading data Downloading data Analysis and embedding code in text Autogenerating figures Github syncing Renv
+There are some analyses that are not amenable to computational reproducibility. In particular, analyses that involve a manual component, such as coding videos, or in MRI analysis identifying fiducial points and drawing retinotopic regions of interest, often cannot be automated. We need to be flexible and creative with these sorts of situations, and think about how best to integrate the manual components into a reproducible pipeline. This might involve creating a file to store the manually coded values which is then loaded in for the rest of the analysis.
 
-# Modality-specific issues
+# An example
 
-MRI, manual analyses
+For this example we will download and analyse a data file from a recent study [@Meese2023]. We will run an ANOVA, report the results, and generate a figure. This is a fairly minimal example, but it should scale up to other types of data.
+
+## Download the data
+
+First let's download the data file. It's actually the one we encountered earlier, the spreadsheet .csv file. So here is the code that finds and downloads the file:
+
+```{r datadownload, include=TRUE}
+
+# check if a local directory exists, if not create it
+if (!dir.exists('local/')){dir.create('local')}
+
+# only download the file if it doesn't already exist
+if (!file.exists('local/2011datalong.csv')){
+
+# check if we have the osfr package:
+packagelist <- c('osfr') # list of CRAN packages
+# find which packages are missing and install them
+missingpackages <- packagelist[!packagelist %in% installed.packages()[,1]]
+if (length(missingpackages)>0){install.packages(missingpackages)}
+# then activate all the packages with the library function
+toinstall <- packagelist[which(!packagelist %in% (.packages()))]
+invisible(lapply(toinstall,library,character.only=TRUE))
+
+# now index the repository where the file lives
+nodeID <- osf_retrieve_node('kthg3')
+filelist <- osf_ls_files(nodeID, n_max=Inf)
+
+# find the file in the list of files from the repository
+id <- pmatch('2011datalong.csv',filelist$name)
+
+# download to the local directory
+osf_download(filelist[id,],'local/')
+}
+
+# finally load in the data
+data <- read.csv('local/2011datalong.csv')
+
+# show a summary of the data
+head(data)
+
+```
+
+## Run the analysis
+
+The data from this study are judgements of the perceived size of circles, before and after adaptation. We will do some basic preprocessing, in which we extract data for a particular condition, pool over repetition, and calculate the adaptation effect for each participant at each level of the independent variable. Then we'll run an ANOVA using a subset of the data. This is reproducing the analysis of the data in Figure 3a of the Meese paper. Note that understanding exactly what the code is doing is not critical as this will be different for every study we look at. The important thing is seeing the process by which we extract the results of the analysis and embed them in the text.
+
+```{r sizeanalysis, include=TRUE, message=FALSE, warning=FALSE}
+
+# extract information about stimulus levels
+proportions <- unique(data[,3])
+propdB <- 20*log10(proportions)
+
+# convert some variables to factors for use in ANOVA
+data[,1] <- as.factor(data[,1])
+data[,3] <- as.factor(data[,3])
+
+# average across repetition, converting to 6-D array of condition means
+# dimensions are participant, adapt condition, proportion, DV, IV, Basesize
+meansettingsdB <- by(20*log10(data$Setting),list(data$Participant,data$Adaptor,
+      data$Proportion,data$DV,data$IV,data$BaseSize),mean)
+
+# reshape to run ANOVA
+counter <- 0
+sizesetting <- NULL
+sizeval <- NULL
+subj <- NULL
+lev <- NULL
+for (size in 1:2){
+  for (s in 1:8){
+    for (level in 1:7){
+      counter <- counter + 1
+      sizesetting[counter] <- meansettingsdB[s,3,level,2,2,size]-meansettingsdB[s,1,level,2,2,size]
+      sizeval[counter] <- size
+      subj[counter] <- s
+      lev[counter] <- level
+    }
+  }
+}
+
+# check we have the ez and BayesFactor packages:
+packagelist <- c('ez','BayesFactor','pals') # list of CRAN packages
+# find which packages are missing and install them
+missingpackages <- packagelist[!packagelist %in% installed.packages()[,1]]
+if (length(missingpackages)>0){install.packages(missingpackages)}
+# then activate all the packages with the library function
+toinstall <- packagelist[which(!packagelist %in% (.packages()))]
+invisible(lapply(toinstall,library,character.only=TRUE))
+
+# run ANOVA for size judgements and size adaptation
+aovdata <- data.frame(as.factor(subj),as.factor(lev),as.factor(sizeval),sizesetting)
+colnames(aovdata) <- c('subj','lev','sizeval','sizesetting')
+anovaoutput <- ezANOVA(data=aovdata,dv=sizesetting,wid=subj,within=list(lev,sizeval),
+                       type=3,detailed=TRUE)
+# run Bayesian ANOVA on the same data for Bayes factors
+aovBF <- anovaBF(sizesetting ~ lev*sizeval + subj, whichModels='all',
+                 whichRandom = 'subj', data=aovdata)
+allBFs <- extractBF(aovBF)
+GGvals <- as.numeric(unlist(anovaoutput[3]))
+interactionbf <- log10(allBFs$bf[7] / allBFs$bf[4])
+
+```
+## Report the results
+
+The results of the ANOVA are stored in the variable *anovaoutput*, and the Bayes factors are in the variable *allBFs* (and *interactionbf*). We can index these to report the results as follows:
+
+A factorial (7 stimulus size $\times$ 2 adaptor size) repeated measures ANOVA indicated that the main effect of relative stimulus size was significant (F(`r round(anovaoutput$ANOVA$DFn[2]*GGvals[3],digits=1)`,`r round(anovaoutput$ANOVA$DFd[2]*GGvals[3],digits=1)`) = `r round(anovaoutput$ANOVA$F[2],digits=2)`, p < 0.0001, $\eta^2_g$ = `r round(anovaoutput$ANOVA$ges[2],digits=2)`, $log_{10}BF_{10}$ = `r round(log10(allBFs$bf[1]),digits=1)`), but there was no effect of absolute adaptor size (F(`r anovaoutput$ANOVA$DFn[3]`,`r anovaoutput$ANOVA$DFd[3]`) = `r round(anovaoutput$ANOVA$F[3],digits=3)`, p = `r round(anovaoutput$ANOVA$p[3],digits=2)`, $\eta^2_g$ = `r round(anovaoutput$ANOVA$ges[3],digits=2)`, $log_{10}BF_{10}$ = `r round(log10(allBFs$bf[2]),digits=1)`), nor any interaction (F(`r anovaoutput$ANOVA$DFn[4]`,`r anovaoutput$ANOVA$DFd[4]`) = `r round(anovaoutput$ANOVA$F[4],digits=2)`, p = `r round(anovaoutput$ANOVA$p[4],digits=2)`, $\eta^2_g$ = `r round(anovaoutput$ANOVA$ges[4],digits=2)`, $log_{10}BF_{10}$ = `r round(interactionbf,digits=1)`).
+
+You can check the markdown file to see how I have extracted the results of the statistical tests, but it is all done with in-line R snippets, and judicious use of the *round* function. This is the critical thing - we don't manually type in the values from the ANOVA, they are automatically inserted into the text!
+
+## Plot a figure
+
+Finally we can create a figure to summarise the results as follows:
+
+```{r makefigure, include=TRUE, message=FALSE, warning=FALSE}
+
+if (!dir.exists('Figures/')){dir.create('Figures')}
+
+pdf('Figures/datafigure.pdf', bg="transparent", height = 5, width = 5)
+
+colpal <- brewer.pastel1(9)
+
+plotlims <- c(-12,12,-3,3) 
+ticklocsx <- seq(-12,12,6)   
+ticklocsy <- 20*log10(seq(70,140,10)/100)   
+ticklabelsx <- c("25","50","100","200","400")      
+ticklabelsy <- seq(-30,40,10)   
+
+par(pty="s") 
+plot(x=NULL,y=NULL,axes=FALSE, ann=FALSE, xlim=plotlims[1:2], ylim=plotlims[3:4])   
+axis(1, at=ticklocsx, tck=0.01, lab=F, lwd=2)    
+axis(2, at=ticklocsy, tck=0.01, lab=F, lwd=2)
+mtext(text = ticklabelsx, side = 1, at=ticklocsx)   
+mtext(text = ticklabelsy, side = 2, at=ticklocsy, line=0.2, las=1)
+title(xlab="Target size (% of adaptor)", col.lab=rgb(0,0,0), line=1.2, cex.lab=1.5)   
+title(ylab="Size shift (%)", col.lab=rgb(0,0,0), line=1.5, cex.lab=1.5)
+
+lines(c(-12,12),c(0,0),lty=2,lwd=2)
+
+datasubset <- meansettingsdB[,3,,2,2,1]-meansettingsdB[,1,,2,2,1]
+toplot <- apply(datasubset,2,mean)
+toplotSE <- apply(datasubset,2,sd)/sqrt(8)
+arrows(propdB,toplot,x1=propdB, y1=toplot-toplotSE, length=0.015, angle=90, lwd=2)  
+arrows(propdB,toplot,x1=propdB, y1=toplot+toplotSE, length=0.015, angle=90, lwd=2)  
+lines(propdB,toplot,lwd=3,col=colpal[1])
+points(propdB,toplot,pch=21,cex=2,bg=colpal[1],lwd=2)
+
+datasubset <- meansettingsdB[,3,,2,2,2]-meansettingsdB[,1,,2,2,2]
+toplot <- apply(datasubset,2,mean)
+toplotSE <- apply(datasubset,2,sd)/sqrt(8)
+arrows(propdB,toplot,x1=propdB, y1=toplot-toplotSE, length=0.015, angle=90, lwd=2)  
+arrows(propdB,toplot,x1=propdB, y1=toplot+toplotSE, length=0.015, angle=90, lwd=2)  
+lines(propdB,toplot,lwd=3,col=colpal[2])
+points(propdB,toplot,pch=22,cex=2,bg=colpal[2],lwd=2)
+
+text(-3,2.5,'Aligned adaptor',cex=1.2,pos=4)
+legend(-12, 20*log10(1.4), c("1 deg","2 deg"), title='Adaptor size', 
+       cex=1, pt.cex=2, pt.bg=colpal[1:2], pch=21:22, pt.lwd=2, box.lwd=2)
+
+invisible(dev.off()) # the invisible function prevents reporting success
+
+```
+
+Notice that we have generated the figure but not displayed it yet. We can then load in and display the figure in the output:
+
+```{r datafig, fig.cap="Summary of size adaptation data from Meese and Baker (2023).", fig.align="center"}
+
+knitr::include_graphics('Figures/datafigure.pdf')
+
+```
+
+The figure appears in the output document as Figure \@ref(fig:datafig). Where possible I guess we'll try and produce exactly the same figures as in the original manuscript that is provided by the authors (this will be much easier if they've used R to do the plotting!).
 
 # References

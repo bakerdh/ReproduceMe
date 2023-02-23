@@ -39,3 +39,5 @@ vignettes/*.pdf
 .Renviron
 
 local/
+Figures/
+.DS_Store

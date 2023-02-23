@@ -138,7 +138,7 @@
 
 \title{Computational Reproducibility Cookbook}
 \author{Daniel H. Baker, University of York}
-\date{2023-02-15}
+\date{2023-02-23}
 
 \begin{document}
 \maketitle
@@ -146,12 +146,12 @@
 \hypertarget{intro}{%
 \section{Intro}\label{intro}}
 
-This document contains notes describing a process for making scientific papers computationally reproducible. It is written in R markdown, and intended to serve as a handbook for the `ReproduceMe' pilot project at the University of York (in 2023). Most of the examples here involve R, as we anticipate using R for most projects, however many of the same things can be achieved in other languages.
+This document contains notes describing a process for making scientific papers computationally reproducible. It is written in R markdown, and intended to serve as a handbook for the `ReproduceMe' pilot project at the University of York in 2023. Most of the examples here involve R, as we anticipate using R for most projects, however many of the same things can be achieved in other languages.
 
 \hypertarget{background-on-reproducibility}{%
 \subsection{Background on reproducibility}\label{background-on-reproducibility}}
 
-The goal of computational reproducibility is that all of the analyses in a paper can be reconstructed. For modelling and simulation papers, this requires sharing of code. For empirical papers it requires sharing of both code and data. Although data sharing has become commonplace in recent years, researchers appear to be much less willing to share analysis code. This could be for any number of reasons, such as fear that they have made an error, or lack of confidence in their own coding skills. It could also be simply be that current norms in most fields do not require code sharing. However making one's work reproducible has numerous benefits, including increasing the transparency of the analysis, and the confidence of readers, reviewers and editors. Other researchers can then use parts of an analysis pipeline in their own work, speeding up scientific progress. Finally, it is potentially the case that a reproducible workflow potentially benefits the authors themselves if they wish to revisit their analysis in the future.
+The goal of computational reproducibility is that all of the analyses in a paper can be reconstructed. For modelling and simulation papers, this requires sharing of code. For empirical papers it requires sharing of both code and data. Although data sharing has become commonplace in recent years, researchers appear to be much less willing to share analysis code. This could be for any number of reasons, such as fear that they have made an error, or lack of confidence in their own coding skills. It could also be simply be that current norms in most fields do not require code sharing. However making one's work reproducible has numerous benefits, including increasing the transparency of the analysis, and the confidence of readers, reviewers and editors. Other researchers can then re-use parts of an analysis pipeline in their own work, speeding up scientific progress. Finally, it is potentially the case that a reproducible workflow benefits the authors themselves if they wish to revisit or reconstruct their own analysis in the future.
 
 \hypertarget{five-levels-of-computational-reproducibility}{%
 \section{Five levels of computational reproducibility}\label{five-levels-of-computational-reproducibility}}
@@ -175,9 +175,9 @@ Computational reproducibility can be as simple as posting a script and data onli
 
 \textbf{Level 3} - a single script automatically downloads and analyses all raw data, generates all tables and figures, and produces a pdf of the entire manuscript (note that this script may execute other scripts, e.g.~in different programming languages). This is a more impressive solution, as it is clear precisely where all of the values reported in the paper have come from, and how the figures were constructed. It can be substantially more work to get to this stage, but if the paper is already written then converting to an executable format is largely procedural. The journal \href{https://elifesciences.org/}{eLife} piloted something along these lines a few years ago, though it seems to have been forgotten about now.
 
-\textbf{Level 4} - all code is embedded in a Docker container (or similar) that includes the software required to run (e.g.~specific package versions, and versions of the programming environment). This would be extremely technically challenging to do from scratch. However fortunately there are some useful tools already available. The \href{https://rocker-project.org/}{Rocker} project provides standard Docker containers for R studio, which can be downloaded and used as a wrapper for the entire computational environment. I have not tried doing this yet, but there is plenty of documentation, and also a useful paper by Peikert and Brandmaier (2021) that explains how to go about it. A less extreme version is to use the \href{https://rstudio.github.io/renv/articles/renv.html}{\emph{renv}} package to manage package versions in R.
+\textbf{Level 4} - all code is embedded in a Docker container (or similar) that includes the software required to run (e.g.~specific package versions, and versions of the programming environment). This would be extremely technically challenging to do from scratch. However fortunately there are some useful tools already available. The \href{https://rocker-project.org/}{Rocker} project provides standard Docker containers for R studio, which can be downloaded and used as a wrapper for the entire computational environment. I have not tried doing this yet, but there is plenty of documentation, and also a useful paper by Peikert and Brandmaier (2021) that explains how to go about it. A less extreme version is to use the \href{https://rstudio.github.io/renv/articles/renv.html}{\emph{renv}} package to manage package versions in R (more on this below).
 
-Discussions about which level to aim for should be had with the study authors before work begins on making things reproducible. It is always easier to program something when the goal is clear, and there may be idiosyncracies specific to an individual study that means that Level 3 or 4 is not practical. Sometimes there are also restrictions on sharing of raw data (e.g.~where this could potentially be used to identify a participant), and in such cases we might aim for reproducibility based on preprocessed or de-identified data. All of this is totally fine - for this pilot project our goal is simply to make things more reproducible than Level 0, so we need to be pragmatic rather than puritanical.
+Discussions about which level to aim for should be had with the study authors before work begins on making materials reproducible. It is always easier to program something when the goal is clear, and there may be idiosyncracies specific to an individual study that means that Level 3 or 4 is not practical. Sometimes there are also restrictions on sharing of raw data (e.g.~where this could potentially be used to identify a participant), and in such cases we might aim for reproducibility based on preprocessed or de-identified data. All of this is totally fine - for this pilot project our goal is simply to make things more reproducible than Level 0, so we need to be pragmatic rather than puritanical.
 
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
@@ -185,7 +185,7 @@ Discussions about which level to aim for should be had with the study authors be
 \hypertarget{r-markdown-is-really-good}{%
 \subsection{\texorpdfstring{\emph{R Markdown} is really good}{R Markdown is really good}}\label{r-markdown-is-really-good}}
 
-\href{https://www.markdownguide.org/}{Markdown} is a generic convention for document formatting. R Markdown takes this basic concept and integrates it into the R environment. This means you can produce a single script that contains both text and computer code. When the script is executed the code runs too, meaning that analyses can be conducted, and an output document is generated. It is possible to automate all parts of an analysis pipeline in this way, with different sections of the code importing and processing the data, generating figures, and formatting the output in the style of a paper. You can then `knit' the markdown file to a variety of formats including pdf, Word documents, html and epub. Similar systems exist for other programming languages, including \href{https://jupyter.org/}{Jupyter notebooks} for Python, and \href{https://uk.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html}{Matlab live scripts}. We now have several examples of full papers written in R Markdown, available at the following repositories:
+\href{https://www.markdownguide.org/}{Markdown} is a generic convention for document formatting. R Markdown takes this basic concept and integrates it into the R environment. This means you can produce a single script that contains both text and computer code. When the script is executed the code runs too, meaning that analyses can be conducted, and an output document is generated. It is possible to automate all parts of an analysis pipeline in this way, with different sections of the code importing and processing the data, generating figures, and formatting the output in the style of a paper. You can then `knit' the markdown file to a variety of formats including pdf, Word documents, html and epub. Similar systems exist for other programming languages, including \href{https://jupyter.org/}{Jupyter notebooks} for Python, and \href{https://uk.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html}{Matlab live scripts}. We now have several examples of full papers written in R Markdown, available at the following repositories (these are clickable hyperlinks):
 
 \href{https://github.com/bakerdh/FourierStats}{Baker (2021)}
 
@@ -200,9 +200,9 @@ In each case, the Rmd file contains the markdown script that will auto-generate 
 \hypertarget{markdown-file-structure}{%
 \subsection{Markdown file structure}\label{markdown-file-structure}}
 
-There is no set structure for Markdown files, which can interleave chunks of text, code, tables and images in any order. However it is sensible to follow some basic design principles to make documents easier to navigate. In principle we could include all of the R code at the start of the file, and all of the text for the manuscript below it. However this makes it quite difficult to find different sections of code. Instead it is better to break the analysis up into several distinct chunks of code, and scatter these throughout the manuscript in appropriate locations. The caveat here is that if we wish to embed values from some analysis, or figures that have been automatically generated, these things need to happen before we try to use the results in the text. In RStudio, section headings (created using either a single or double hash symbol) allow the user to navigate easily through the document via the menu in the lower left hand corner of the script window.
+There is no set structure for Markdown files, which can interleave chunks of text, code, tables and images in any order. However it is sensible to follow some basic design principles to make documents easier to navigate. In principle we could include all of the R code at the start of the file, and all of the text for the manuscript below it. However this sometimes makes it quite difficult to find different sections of code. Instead it is better to break the analysis up into several distinct chunks of code, and scatter these throughout the manuscript in appropriate locations. The caveat here is that if we wish to embed values from some analysis, or figures that have been automatically generated, these things need to happen before we try to use the results in the text. In RStudio, section headings (created using either a single or double hash symbol) and code chunk names allow the user to navigate easily through the document via the menu in the lower left hand corner of the script window.
 
-A chunk of R code is initiated with three reverse ticks (I can't get these to render properly in the markdown system, but it's ASCII code 96), followed by the letter r in curly brackets, and terminated with three more reverse ticks. Here is an example:
+A chunk of R code is initiated with three reverse ticks (I can't get these to render properly in the markdown system, but it's ASCII code 96), followed by the letter r (and optionally a name for the code chunk) in curly brackets, and terminated with three more reverse ticks. Here is an example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -217,7 +217,7 @@ It is also possible to include pieces of `inline' code as part of a markdown doc
 \hypertarget{flags-to-specify-the-level-of-analysis}{%
 \subsection{Flags to specify the level of analysis}\label{flags-to-specify-the-level-of-analysis}}
 
-Some analysis pipelines can become very complicated, requiring substantial storage space, and taking a long time to execute. In such cases I have found it helpful to set a flag (normally called \emph{processdata}) at the start of the script to control the level of detail that the analysis is performed at. The flag is hierarchical, in that setting it to a value of 2 implies that the operations from levels 0 and 1 will also be executed. Whilst this will vary across studies, one possibility is as follows:
+Some analysis pipelines can become very complicated, requiring substantial storage space, and taking a long time to execute. In such cases I have found it helpful to set a flag (normally called \emph{processdata}) at the start of the script to control the level of detail that the analysis is performed at. The flag is hierarchical, in that setting it to a value of 2 implies that the operations from levels 0 and 1 will also be executed. Whilst this will vary across studies, one possible convention is as follows:
 
 \texttt{processdata\ \textless{}-\ 0}: This means that no data are processed, and the manuscript is compiled using data that have already been analysed. The appropriate files are downloaded from the OSF (or other repository) if they are not available locally. This mode is particularly useful when writing a manuscript in markdown, as one can see the typeset text rapidly without waiting for analyses to execute.
 
@@ -225,14 +225,14 @@ Some analysis pipelines can become very complicated, requiring substantial stora
 
 \texttt{processdata\ \textless{}-\ 2}: Here we conduct `second level' analyses that do not take a long time, for example statistical testing, using processed data and/or model outputs. These operations might require processed data files for individual participants, such as participant level averages of the dependent variable(s). An example for EEG might be the participant's average ERP waveforms for each trial.
 
-\texttt{processdata\ \textless{}-\ 3}: The highest value for the flag specifies that all data should be downloaded and analysed from the lowest level available. Ideally this will be the raw data files recorded during an experiment. At this level of analysis we also perform any time-consuming analysis procedures, such as model fitting, bootstrapping, and so on. The outputs of all of these analyses are stored in an intermediate data file that allows the lower values of \emph{processdata} to skip the resource-intensive analysis steps. This data file should also be stored in the project's online (i.e.~OSF) repository so that it can be downloaded directly if the user does not have the resources available for the full analysis.
+\texttt{processdata\ \textless{}-\ 3}: The highest value for the flag specifies that all data should be downloaded and analysed from the lowest level available. Ideally this will be the raw data files recorded during an experiment. At this level of analysis we also perform any time-consuming analysis procedures, such as model fitting, bootstrapping, and so on. The outputs of all of these analyses are stored in an intermediate data file that allows the lower values of \emph{processdata} to skip the resource-intensive analysis steps. This data file should also be stored in the project's online repository (i.e.~OSF) so that it can be downloaded directly if the user does not have the resources available for the full analysis.
 
 Different sections of code throughout the script begin with \emph{if} statements that evaluate the \emph{processdata} flag, and only execute their code segment if required. At the start of the script I include comments that specify what each level of the flag will do, and usually estimates of the time and storage space required, so that the user can make an informed decision about what they want to do.
 
 \hypertarget{downloading-data-and-other-resources}{%
 \subsection{Downloading data and other resources}\label{downloading-data-and-other-resources}}
 
-R has a native function called \emph{download.file} that can be used to copy files from the internet to the local computer. This is fine if you have a small number of files to download and they all have static URLs that are unlikely to change. However most of the time we are more likely to store files in a repository such as the Open Science Framework site. The \href{https://cran.r-project.org/package=osfr}{*osfr} package provides some useful tools for uploading, downloading, and also indexing OSF repositories. All you need to know is the five character identifier for the repository you are interested in. For example, for the repository \url{https://osf.io/kthg3/} the five character code is the last part of the URL: kthg3
+R has a native function called \emph{download.file} that can be used to copy files from the internet to the local computer. This is fine if you have a small number of files to download and they all have traditional static URLs that are unlikely to change. However most of the time we are more likely to store files in a repository such as the Open Science Framework site. The \href{https://cran.r-project.org/package=osfr}{\emph{osfr}} package provides some useful tools for uploading, downloading, and also indexing OSF repositories. All you need to know is the five character identifier for the repository you are interested in. For example, for the repository \url{https://osf.io/kthg3/} the five character code is the last part of the URL: kthg3
 
 The first thing we need to do is index the root repository and see what files it contains:
 
@@ -264,7 +264,7 @@ The first thing we need to do is index the root repository and see what files it
 ## # ... with 23 more rows
 \end{verbatim}
 
-We can then download any of the files we might need, for example:
+We can then download any of the files we might need, for example this line of code will donwload the first file in the list:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -272,7 +272,7 @@ We can then download any of the files we might need, for example:
 \end{Highlighting}
 \end{Shaded}
 
-You can specify the local directory where you want to store the file (more on that in the next section). I usually use text matching on the file names to identify the files I need, e.g.:
+The main thing we are likely to download is data for analysis, but we could also download additional scripts, images, or anything else required for running the analysis. You can specify the local directory where you want to store the file (more on that in the next section). I usually use text matching on the file names to identify the files I need, e.g.:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -284,12 +284,12 @@ You can specify the local directory where you want to store the file (more on th
 \end{Highlighting}
 \end{Shaded}
 
-There are also functions in the \emph{osfr} package to enable automated uploading of files, which I find more stable than the drag and drop web interface. In order to upload files (or download them from private repositories) you need to provide an authentication key. However it is possible to download files from any public repository without requiring any log in details or authentication (as above), so our markdown files should work on any machine with internet access.
+Note that we should avoid repeatedly downloading files that are already present locally, for example by using an \emph{if} statement as above. There are also functions in the \emph{osfr} package to enable automated uploading of files, which I find more stable than the drag and drop web interface. In order to upload files (or download them from private repositories) you need to provide an authentication key. However it is possible to download files from any public repository without requiring any log in details or authentication (as above), so our markdown files should work on any machine with internet access.
 
 \hypertarget{local-file-management}{%
 \subsection{Local file management}\label{local-file-management}}
 
-When we download files, we need to store them somewhere sensible. I like having a directory in the project folder called something like \emph{/local} or \emph{/temp}, and then organising this into sensible subdirectories, such as \emph{/rawdata} and \emph{/processeddata}. Below we will introduce Github, which has quite strict storage limitations. Rather than syncing these directories of local files to Github, we can add the path to a file called .gitignore, which means that \emph{git} will not try to sync it. Other subdirectories might also be useful, including \emph{/Figures} and \emph{/scripts}, depending on the files that are required to run the analysis. Note that it is generally a bad idea to use absolute referencing for file locations, for example including a path such as \texttt{C:\textbackslash{}user\textbackslash{}daniel\textbackslash{}Documents} will not work on all devices. We will check that scripts work on multiple operating systems (Mac, Windows, Linux) to avoid any obvious problems.
+When we download files, we need to store them somewhere sensible. I like having a directory in the project folder called something like \emph{/local} or \emph{/temp}, and then organising this into sensible subdirectories, such as \emph{/rawdata} and \emph{/processeddata}. Below we will introduce Github, which has quite strict storage limitations. Rather than syncing these (potentially very large) directories of local files to Github, we can add the path to a file called .gitignore, which means that \emph{git} will not try to sync it. Other subdirectories might also be useful, including \emph{/Figures} and \emph{/scripts}, depending on the files that are required to run the analysis. Note that it is generally a bad idea to use absolute referencing for file locations, for example including a path such as \texttt{C:\textbackslash{}user\textbackslash{}daniel\textbackslash{}Documents} will not work on all devices. During the ReproduceMe project, we will check that scripts work on multiple operating systems (Mac, Windows, Linux) to avoid any obvious problems.
 
 \hypertarget{automating-figure-generation}{%
 \subsection{Automating figure generation}\label{automating-figure-generation}}
@@ -312,7 +312,7 @@ Then we call whatever plotting functions we want to to generate our figure. I te
 \end{Highlighting}
 \end{Shaded}
 
-specifies a 1 row by 3 column plot layout. Each new plot appears in a different location within this grid. Once we are finished plotting, we close the file with:
+specifies a 1 row by 3 column plot layout. New plots appear in successive locations within this grid. Once we are finished plotting, we close the file with:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -328,9 +328,9 @@ Finally, at the appropriate place in the text we can include our figure:
 \end{Highlighting}
 \end{Shaded}
 
-Notice how this interacts with the \emph{processdata} flag we talked about above. At the lowest level (\emph{processdata} = 0) the figures don't get generated at all, but since they exist as independent files they can still be loaded in when creating the manuscript.
+Notice how this might interact with the \emph{processdata} flag we talked about above. At the lowest level (\emph{processdata} = 0) the figures won't get generated at all, but since they exist as independent files they can still be loaded in when creating the manuscript.
 
-For really complicated plots with irregular layouts, it's sometimes necessary to do things in a slightly different way, e.g.~by combining multiple postscript files and raster images at arbitrary locations. I explain how to do this in the plotting chapter (Ch 18) of my R book, which is available at: \url{https://eprints.whiterose.ac.uk/181926/}
+For really complicated plots with irregular layouts, it's sometimes necessary to do things in a slightly different way, e.g.~by combining multiple postscript files and raster images at arbitrary locations. I explain how to do this in the plotting chapter (Ch 18) of my R book, which is available at: \url{https://eprints.whiterose.ac.uk/181926/}. And often in papers we need to generate a diagram in a different piece of software, like Adobe Illustrator. It's totally fine to import things like this as graphics, rather than generate them automatically.
 
 \hypertarget{package-management}{%
 \subsection{Package management}\label{package-management}}
@@ -351,7 +351,7 @@ The package management system in R is excellent, in that most of what we might n
 \end{Highlighting}
 \end{Shaded}
 
-However the above code will install the most recent package versions. Over time, packages get updated (along with the R language itself), and there is a risk that code will develop bugs as a consequence. An alternative is the \href{https://rstudio.github.io/renv/articles/renv.html}{\emph{renv}} package, which takes a snapshot of the precise package versions that are being used. This requires some minimal lines of code.
+However the above code will install the most recent package versions. Over time, packages get updated (along with the R language itself), and there is a risk that code will develop bugs as a consequence. An alternative approach is the \href{https://rstudio.github.io/renv/articles/renv.html}{\emph{renv}} package, which takes a snapshot of the precise package versions that are being used. This requires some minimal lines of code.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -385,7 +385,7 @@ However the above code will install the most recent package versions. Over time,
 \setcounter{enumi}{2}
 \tightlist
 \item
-  The above lines of code only need to be called when we first set up the project, after which they could be commented out from the script. If the lock file is included as part of the project, the environment can then be restored with:
+  The above lines of code only need to be called when we first set up the project, after which they could be commented out in the script. If the lock file is included as part of the project, the environment can then be restored with:
 \end{enumerate}
 
 \begin{Shaded}
@@ -401,12 +401,12 @@ This solution isn't perfect, for example it doesn't control the R version being 
 
 It is possible to include sections of Python code in an R markdown document. This might be useful if one needs to access Python libraries and toolboxes. It requires the \href{}{\emph{reticulate}} package to be available, through which it is possible to specify which Python version you wish to use on your machine (it must already have been installed). A python code chunk resembles an R code chunk, and is initiated by three reverse ticks followed by \texttt{\{python\}} (and terminated with three more reverse ticks). Within a python code chunk it is possible to import packages from the local python instance in the usual way, and conduct any Python analyses.
 
-The Python instance has a sandboxed area of memory that cannot directly access the variables in the R Environment. However a special R variable is created called \emph{py} that stores any Python variables as subfields. So a variable called \emph{pyvar} in the Python code can be accessed in R as \texttt{py\$pyvar}. Similarly, creating a new field of the \emph{py} variable, such as \texttt{py\$Rdata} will cause a variable called \emph{RData} to appear in the Python memory. In this way it is possible to pass information between R and Python. It is a little more clunky than having a shared memory, but presumably necessary for technical reasons (i.e.~to do with different data types). It is possible to do something similar for other languages, including Julia, C++, JavaScript, bash and SQL. I haven't tried this, but apparently it's also possible to use Octave in this way, which is an open source Matlab alternative. If we end up with some Matlab code that we can't translate to R, this might be a useful option.
+The Python instance has a sandboxed area of memory that cannot directly access the variables in the R Environment. However a special R variable is created called \emph{py} that stores any Python variables as subfields. So a variable called \emph{pyvar} in the Python code can be accessed in R as \texttt{py\$pyvar}. Similarly, creating a new field of the \emph{py} variable, such as \texttt{py\$Rdata} will cause a variable called \emph{Rdata} to appear in the Python memory. In this way it is possible to pass information between R and Python. It is a little more clunky than having a shared memory, but presumably necessary for technical reasons (i.e.~to do with different data types). It is possible to do something similar for other languages, including Julia, C++, JavaScript, bash and SQL. I haven't tried this, but apparently it's also possible to use Octave in this way, which is an open source Matlab alternative. If we end up with some Matlab code that we can't translate to R, this might be a useful option.
 
 \hypertarget{calling-matlab-and-other-functions-from-the-command-line}{%
 \subsection{Calling Matlab and other functions from the command line}\label{calling-matlab-and-other-functions-from-the-command-line}}
 
-Frustratingly, it is not possible to directly access the Matlab kernel through Markdown. There is a workaround, which is to create a Matlab script and send this directly to Matlab via the terminal. Annoyingly there is no way to directly store the outputs in R's memory (though they do get echoed to the console if you omit the semicolons at the end of each line), so the script will need to save any outputs to an external file, which would then be read back in by R. However this does permit access to Matlab-only toolboxes that might be critical for some analyses. It is also necessary to tell the terminal exactly where Matlab exists on the machine, which will probably need to be altered by the user. Here is some example code that generates a simple Matlab script, and then executes it via the terminal:
+Frustratingly, it is not possible to directly access the Matlab kernel through Markdown in the way we can with Python. There is a workaround, which is to create a Matlab script and send this directly to Matlab via the terminal. Annoyingly there is no way to directly store the outputs in R's memory (though they do get echoed to the console if you omit the semicolons at the end of each line), so the script will need to save any outputs to an external file, which would then be read back in by R. This is not ideal, but it does enable access to Matlab-only toolboxes that might be critical for some analyses. It is also necessary to tell the terminal exactly where Matlab exists on the machine, which will probably need to be altered by the user. Here is some example code that generates a simple Matlab script, and then executes it via the terminal:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -440,7 +440,7 @@ It should be possible to use a similar approach to call other programs that are 
 \hypertarget{output-formats}{%
 \subsection{Output formats}\label{output-formats}}
 
-There are a wide array of possible output formats available when using Markdown. However the most useful are pdf, HTML and Microsoft Word. I include the following code in the header information of every Markdown file. RStudio then makes all three file formats available in the dropdown menu next to the `Knit' button at the top of the script.
+There are a wide array of possible output formats available when using Markdown. The most useful are pdf, HTML and Microsoft Word. I include the following code in the header information of every Markdown file. RStudio then makes all three file formats available in the dropdown menu next to the `Knit' button at the top of the script.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -453,12 +453,12 @@ There are a wide array of possible output formats available when using Markdown.
 \end{Highlighting}
 \end{Shaded}
 
-Note that \emph{pdf\_document2} from the \emph{bookdown} package seems to work much better than the default \emph{pdf\_document}, which can't cope with figure numbering for some reason. Actually Word and HTML documents also don't seem to handle figure referencing properly either, but they can sometimes be useful.
+Note that \emph{pdf\_document2} from the \emph{bookdown} package seems to work much better than the default \emph{pdf\_document}, which can't cope with figure numbering for some reason. Actually Word and HTML documents also don't seem to handle figure referencing properly either, but we need them sometimes.
 
 \hypertarget{typesetting-equations-using-latex}{%
 \subsection{Typesetting equations using LaTeX}\label{typesetting-equations-using-latex}}
 
-When Markdown creates pdf files as output, it actually uses \href{https://www.latex-project.org/}{\LaTeX{}} (pronounced `laytech', or sometimes `laatech'). This is a document typesetting system very popular in the mathematical sciences because it is good at typesetting equations, and it is possible to incorporate pieces of \LaTeX{} code into a Markdown file (such as the fancy text in this paragraph for the word Latex). Some journals also accept \LaTeX{} files for submission. A full overview of how to use LaTeX is beyond the scope of this document. However it is straightfoward to incorporate a simple equation between pairs of dollar symbols. For example, the code \texttt{\$y\ =\ \textbackslash{}sqrt\{x\^{}2\}\$} generates the equation: \(y = \sqrt{x^2}\).
+When Markdown creates pdf files as output, it actually uses \href{https://www.latex-project.org/}{\LaTeX{}} (pronounced `laytech', or sometimes `laatech'). This is a document typesetting system very popular in the mathematical sciences because it is good at typesetting equations, and it is possible to incorporate pieces of \LaTeX{} code into a Markdown file (such as the fancy text in this paragraph for the word Latex). Some journals also accept \LaTeX{} files for submission. A full overview of how to use LaTeX is beyond the scope of this document. However it is possible to incorporate equations and mathematical symbols between pairs of dollar signs For example, the code \texttt{\$y\ =\ \textbackslash{}sqrt\{x\^{}2\}\$} generates the equation: \(y = \sqrt{x^2}\).
 
 \hypertarget{citations-and-automatic-figure-and-equation-referencing}{%
 \subsection{Citations and automatic figure and equation referencing}\label{citations-and-automatic-figure-and-equation-referencing}}
@@ -471,26 +471,226 @@ We can include citations using a BibTex file containing the references. This can
 \end{Highlighting}
 \end{Shaded}
 
-Then, we can cite a paper either inline as \texttt{@Peikert2021}, which renders as Peikert and Brandmaier (2021), or in square brackets as \texttt{{[}@Peikert2021{]}}, which renders as (Peikert and Brandmaier, 2021). The bibliography appears at the end of the pdf file.
+Then, we can cite a paper either inline as \texttt{@Peikert2021}, which renders as Peikert and Brandmaier (2021), or in square brackets as \texttt{{[}@Peikert2021{]}}, which renders as (Peikert and Brandmaier, 2021). The bibliography appears at the end of the pdf file (see below). We can set the style of the bibliography using a csl style file. The eLife style is used for this document; it needs to be in the project directory, and is specified at the top of the markdown script:
 
-Similarly we can reference figures by giving them a tag. For example the pyramid figure has the tag \emph{repropyramid}, so we can reference it with \texttt{\textbackslash{}@ref(fig:repropyramid)}, which renders as Figure \ref{fig:repropyramid}. Equations work similarly but with an independent numbering system from the figures, indexed by the \emph{eqn:} tag.
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{csl}\SpecialCharTok{:}\NormalTok{ elife.csl}
+\end{Highlighting}
+\end{Shaded}
+
+Similarly we can reference figures by giving them a tag. For example the pyramid figure has the tag \emph{repropyramid}, so we can reference it with \texttt{\textbackslash{}@ref(fig:repropyramid)}, which renders as Figure \ref{fig:repropyramid}. Equations work similarly but with an independent number sequence from the figures, indexed by the \emph{eqn:} tag.
 
 \hypertarget{github-syncing}{%
 \subsection{Github syncing}\label{github-syncing}}
 
-Github is a useful tool for version management and online code storage. It integrates well with OSF and RStudio. If we set up a new public repository on the Github website, we can pull it down to our local computer in RStudio by choosing File: New Project. Select Version Control and then Git. It turns out that Github changed the way to interface with repositories, so much of the information online is out of date. The correct format for the repository URL is: \texttt{git@github.com:bakerdh/ReproduceMe}
+Github is a useful tool for version management and online code storage. It integrates well with both OSF and RStudio. If we set up a new public repository on the Github website, we can pull it down to our local computer in RStudio by choosing File: New Project. Select Version Control and then Git. It turns out that Github changed the way to interface with repositories, so much of the information online is out of date. The correct format for the repository URL is: \texttt{git@github.com:bakerdh/ReproduceMe.git}
 
-The files will download, and we can then make modifications and then synchronise back to the repository by Committing and then Pushing in the Git tab (upper right pane in RStudio). There's a lot more that Github can do, but frankly I don't really understand it, and it's beyond what we'll need for this project.
-
-\hypertarget{an-example}{%
-\section{An example:}\label{an-example}}
-
-Uploading data Downloading data Analysis and embedding code in text Autogenerating figures Github syncing Renv
+The files will download, and we can then make modifications and synchronise back to the repository by Committing and then Pushing in the Git tab (upper right pane in RStudio). There's a lot more that Github can do, but frankly I don't really understand it, and it's beyond what we'll need for this project.
 
 \hypertarget{modality-specific-issues}{%
-\section{Modality-specific issues}\label{modality-specific-issues}}
+\subsection{Modality-specific issues}\label{modality-specific-issues}}
 
-MRI, manual analyses
+There are some analyses that are not amenable to computational reproducibility. In particular, analyses that involve a manual component, such as coding videos, or in MRI analysis identifying fiducial points and drawing retinotopic regions of interest, often cannot be automated. We need to be flexible and creative with these sorts of situations, and think about how best to integrate the manual components into a reproducible pipeline. This might involve creating a file to store the manually coded values which is then loaded in for the rest of the analysis.
+
+\hypertarget{an-example}{%
+\section{An example}\label{an-example}}
+
+For this example we will download and analyse a data file from a recent study (Meese and Baker, 2023). We will run an ANOVA, report the results, and generate a figure. This is a fairly minimal example, but it should scale up to other types of data.
+
+\hypertarget{download-the-data}{%
+\subsection{Download the data}\label{download-the-data}}
+
+First let's download the data file. It's actually the one we encountered earlier, the spreadsheet .csv file. So here is the code that finds and downloads the file:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# check if a local directory exists, if not create it}
+\ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{dir.exists}\NormalTok{(}\StringTok{\textquotesingle{}local/\textquotesingle{}}\NormalTok{))\{}\FunctionTok{dir.create}\NormalTok{(}\StringTok{\textquotesingle{}local\textquotesingle{}}\NormalTok{)\}}
+
+\CommentTok{\# only download the file if it doesn\textquotesingle{}t already exist}
+\ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{file.exists}\NormalTok{(}\StringTok{\textquotesingle{}local/2011datalong.csv\textquotesingle{}}\NormalTok{))\{}
+
+\CommentTok{\# check if we have the osfr package:}
+\NormalTok{packagelist }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}osfr\textquotesingle{}}\NormalTok{) }\CommentTok{\# list of CRAN packages}
+\CommentTok{\# find which packages are missing and install them}
+\NormalTok{missingpackages }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%} \FunctionTok{installed.packages}\NormalTok{()[,}\DecValTok{1}\NormalTok{]]}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(missingpackages)}\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{}\FunctionTok{install.packages}\NormalTok{(missingpackages)\}}
+\CommentTok{\# then activate all the packages with the library function}
+\NormalTok{toinstall }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\FunctionTok{which}\NormalTok{(}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%}\NormalTok{ (}\FunctionTok{.packages}\NormalTok{()))]}
+\FunctionTok{invisible}\NormalTok{(}\FunctionTok{lapply}\NormalTok{(toinstall,library,}\AttributeTok{character.only=}\ConstantTok{TRUE}\NormalTok{))}
+
+\CommentTok{\# now index the repository where the file lives}
+\NormalTok{nodeID }\OtherTok{\textless{}{-}} \FunctionTok{osf\_retrieve\_node}\NormalTok{(}\StringTok{\textquotesingle{}kthg3\textquotesingle{}}\NormalTok{)}
+\NormalTok{filelist }\OtherTok{\textless{}{-}} \FunctionTok{osf\_ls\_files}\NormalTok{(nodeID, }\AttributeTok{n\_max=}\ConstantTok{Inf}\NormalTok{)}
+
+\CommentTok{\# find the file in the list of files from the repository}
+\NormalTok{id }\OtherTok{\textless{}{-}} \FunctionTok{pmatch}\NormalTok{(}\StringTok{\textquotesingle{}2011datalong.csv\textquotesingle{}}\NormalTok{,filelist}\SpecialCharTok{$}\NormalTok{name)}
+
+\CommentTok{\# download to the local directory}
+\FunctionTok{osf\_download}\NormalTok{(filelist[id,],}\StringTok{\textquotesingle{}local/\textquotesingle{}}\NormalTok{)}
+\NormalTok{\}}
+
+\CommentTok{\# finally load in the data}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}local/2011datalong.csv\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\# show a summary of the data}
+\FunctionTok{head}\NormalTok{(data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Participant  Adaptor Proportion   DV   IV BaseSize Setting      RT
+## 1           1 baseline       0.25 size size        4  0.8750 3.12470
+## 2           1 baseline       0.25 size size        4  0.8750 2.32500
+## 3           1 baseline       0.25 size size        4  1.0625 0.92548
+## 4           1 baseline       0.25 size size        4  1.0000 0.85039
+## 5           1 baseline       0.50 size size        4  1.7500 2.73740
+## 6           1 baseline       0.50 size size        4  2.1875 1.28780
+\end{verbatim}
+
+\hypertarget{run-the-analysis}{%
+\subsection{Run the analysis}\label{run-the-analysis}}
+
+The data from this study are judgements of the perceived size of circles, before and after adaptation. We will do some basic preprocessing, in which we extract data for a particular condition, pool over repetition, and calculate the adaptation effect for each participant at each level of the independent variable. Then we'll run an ANOVA using a subset of the data. This is reproducing the analysis of the data in Figure 3a of the Meese paper. Note that understanding exactly what the code is doing is not critical as this will be different for every study we look at. The important thing is seeing the process by which we extract the results of the analysis and embed them in the text.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# extract information about stimulus levels}
+\NormalTok{proportions }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(data[,}\DecValTok{3}\NormalTok{])}
+\NormalTok{propdB }\OtherTok{\textless{}{-}} \DecValTok{20}\SpecialCharTok{*}\FunctionTok{log10}\NormalTok{(proportions)}
+
+\CommentTok{\# convert some variables to factors for use in ANOVA}
+\NormalTok{data[,}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{as.factor}\NormalTok{(data[,}\DecValTok{1}\NormalTok{])}
+\NormalTok{data[,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{as.factor}\NormalTok{(data[,}\DecValTok{3}\NormalTok{])}
+
+\CommentTok{\# average across repetition, converting to 6{-}D array of condition means}
+\CommentTok{\# dimensions are participant, adapt condition, proportion, DV, IV, Basesize}
+\NormalTok{meansettingsdB }\OtherTok{\textless{}{-}} \FunctionTok{by}\NormalTok{(}\DecValTok{20}\SpecialCharTok{*}\FunctionTok{log10}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Setting),}\FunctionTok{list}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Participant,data}\SpecialCharTok{$}\NormalTok{Adaptor,}
+\NormalTok{      data}\SpecialCharTok{$}\NormalTok{Proportion,data}\SpecialCharTok{$}\NormalTok{DV,data}\SpecialCharTok{$}\NormalTok{IV,data}\SpecialCharTok{$}\NormalTok{BaseSize),mean)}
+
+\CommentTok{\# reshape to run ANOVA}
+\NormalTok{counter }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{sizesetting }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{sizeval }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{subj }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{lev }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\ControlFlowTok{for}\NormalTok{ (size }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{)\{}
+  \ControlFlowTok{for}\NormalTok{ (s }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{8}\NormalTok{)\{}
+    \ControlFlowTok{for}\NormalTok{ (level }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{7}\NormalTok{)\{}
+\NormalTok{      counter }\OtherTok{\textless{}{-}}\NormalTok{ counter }\SpecialCharTok{+} \DecValTok{1}
+\NormalTok{      sizesetting[counter] }\OtherTok{\textless{}{-}}\NormalTok{ meansettingsdB[s,}\DecValTok{3}\NormalTok{,level,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,size]}\SpecialCharTok{{-}}\NormalTok{meansettingsdB[s,}\DecValTok{1}\NormalTok{,level,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,size]}
+\NormalTok{      sizeval[counter] }\OtherTok{\textless{}{-}}\NormalTok{ size}
+\NormalTok{      subj[counter] }\OtherTok{\textless{}{-}}\NormalTok{ s}
+\NormalTok{      lev[counter] }\OtherTok{\textless{}{-}}\NormalTok{ level}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\CommentTok{\# check we have the ez and BayesFactor packages:}
+\NormalTok{packagelist }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}ez\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}BayesFactor\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}pals\textquotesingle{}}\NormalTok{) }\CommentTok{\# list of CRAN packages}
+\CommentTok{\# find which packages are missing and install them}
+\NormalTok{missingpackages }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%} \FunctionTok{installed.packages}\NormalTok{()[,}\DecValTok{1}\NormalTok{]]}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(missingpackages)}\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{}\FunctionTok{install.packages}\NormalTok{(missingpackages)\}}
+\CommentTok{\# then activate all the packages with the library function}
+\NormalTok{toinstall }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\FunctionTok{which}\NormalTok{(}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%}\NormalTok{ (}\FunctionTok{.packages}\NormalTok{()))]}
+\FunctionTok{invisible}\NormalTok{(}\FunctionTok{lapply}\NormalTok{(toinstall,library,}\AttributeTok{character.only=}\ConstantTok{TRUE}\NormalTok{))}
+
+\CommentTok{\# run ANOVA for size judgements and size adaptation}
+\NormalTok{aovdata }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\FunctionTok{as.factor}\NormalTok{(subj),}\FunctionTok{as.factor}\NormalTok{(lev),}\FunctionTok{as.factor}\NormalTok{(sizeval),sizesetting)}
+\FunctionTok{colnames}\NormalTok{(aovdata) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}subj\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}lev\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}sizeval\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}sizesetting\textquotesingle{}}\NormalTok{)}
+\NormalTok{anovaoutput }\OtherTok{\textless{}{-}} \FunctionTok{ezANOVA}\NormalTok{(}\AttributeTok{data=}\NormalTok{aovdata,}\AttributeTok{dv=}\NormalTok{sizesetting,}\AttributeTok{wid=}\NormalTok{subj,}\AttributeTok{within=}\FunctionTok{list}\NormalTok{(lev,sizeval),}
+                       \AttributeTok{type=}\DecValTok{3}\NormalTok{,}\AttributeTok{detailed=}\ConstantTok{TRUE}\NormalTok{)}
+\CommentTok{\# run Bayesian ANOVA on the same data for Bayes factors}
+\NormalTok{aovBF }\OtherTok{\textless{}{-}} \FunctionTok{anovaBF}\NormalTok{(sizesetting }\SpecialCharTok{\textasciitilde{}}\NormalTok{ lev}\SpecialCharTok{*}\NormalTok{sizeval }\SpecialCharTok{+}\NormalTok{ subj, }\AttributeTok{whichModels=}\StringTok{\textquotesingle{}all\textquotesingle{}}\NormalTok{,}
+                 \AttributeTok{whichRandom =} \StringTok{\textquotesingle{}subj\textquotesingle{}}\NormalTok{, }\AttributeTok{data=}\NormalTok{aovdata)}
+\NormalTok{allBFs }\OtherTok{\textless{}{-}} \FunctionTok{extractBF}\NormalTok{(aovBF)}
+\NormalTok{GGvals }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{unlist}\NormalTok{(anovaoutput[}\DecValTok{3}\NormalTok{]))}
+\NormalTok{interactionbf }\OtherTok{\textless{}{-}} \FunctionTok{log10}\NormalTok{(allBFs}\SpecialCharTok{$}\NormalTok{bf[}\DecValTok{7}\NormalTok{] }\SpecialCharTok{/}\NormalTok{ allBFs}\SpecialCharTok{$}\NormalTok{bf[}\DecValTok{4}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{report-the-results}{%
+\subsection{Report the results}\label{report-the-results}}
+
+The results of the ANOVA are stored in the variable \emph{anovaoutput}, and the Bayes factors are in the variable \emph{allBFs} (and \emph{interactionbf}). We can index these to report the results as follows:
+
+A factorial (7 stimulus size \(\times\) 2 adaptor size) repeated measures ANOVA indicated that the main effect of relative stimulus size was significant (F(2.3,16.3) = 18.64, p \textless{} 0.0001, \(\eta^2_g\) = 0.54, \(log_{10}BF_{10}\) = 15.1), but there was no effect of absolute adaptor size (F(1,7) = 0.005, p = 0.95, \(\eta^2_g\) = 0, \(log_{10}BF_{10}\) = -0.7), nor any interaction (F(6,42) = 1.44, p = 0.22, \(\eta^2_g\) = 0.04, \(log_{10}BF_{10}\) = -0.8).
+
+You can check the markdown file to see how I have extracted the results of the statistical tests, but it is all done with in-line R snippets, and judicious use of the \emph{round} function. This is the critical thing - we don't manually type in the values from the ANOVA, they are automatically inserted into the text!
+
+\hypertarget{plot-a-figure}{%
+\subsection{Plot a figure}\label{plot-a-figure}}
+
+Finally we can create a figure to summarise the results as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{dir.exists}\NormalTok{(}\StringTok{\textquotesingle{}Figures/\textquotesingle{}}\NormalTok{))\{}\FunctionTok{dir.create}\NormalTok{(}\StringTok{\textquotesingle{}Figures\textquotesingle{}}\NormalTok{)\}}
+
+\FunctionTok{pdf}\NormalTok{(}\StringTok{\textquotesingle{}Figures/datafigure.pdf\textquotesingle{}}\NormalTok{, }\AttributeTok{bg=}\StringTok{"transparent"}\NormalTok{, }\AttributeTok{height =} \DecValTok{5}\NormalTok{, }\AttributeTok{width =} \DecValTok{5}\NormalTok{)}
+
+\NormalTok{colpal }\OtherTok{\textless{}{-}} \FunctionTok{brewer.pastel1}\NormalTok{(}\DecValTok{9}\NormalTok{)}
+
+\NormalTok{plotlims }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{12}\NormalTok{,}\DecValTok{12}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{) }
+\NormalTok{ticklocsx }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{12}\NormalTok{,}\DecValTok{12}\NormalTok{,}\DecValTok{6}\NormalTok{)   }
+\NormalTok{ticklocsy }\OtherTok{\textless{}{-}} \DecValTok{20}\SpecialCharTok{*}\FunctionTok{log10}\NormalTok{(}\FunctionTok{seq}\NormalTok{(}\DecValTok{70}\NormalTok{,}\DecValTok{140}\NormalTok{,}\DecValTok{10}\NormalTok{)}\SpecialCharTok{/}\DecValTok{100}\NormalTok{)   }
+\NormalTok{ticklabelsx }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"25"}\NormalTok{,}\StringTok{"50"}\NormalTok{,}\StringTok{"100"}\NormalTok{,}\StringTok{"200"}\NormalTok{,}\StringTok{"400"}\NormalTok{)      }
+\NormalTok{ticklabelsy }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{30}\NormalTok{,}\DecValTok{40}\NormalTok{,}\DecValTok{10}\NormalTok{)   }
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{pty=}\StringTok{"s"}\NormalTok{) }
+\FunctionTok{plot}\NormalTok{(}\AttributeTok{x=}\ConstantTok{NULL}\NormalTok{,}\AttributeTok{y=}\ConstantTok{NULL}\NormalTok{,}\AttributeTok{axes=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{ann=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{xlim=}\NormalTok{plotlims[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{], }\AttributeTok{ylim=}\NormalTok{plotlims[}\DecValTok{3}\SpecialCharTok{:}\DecValTok{4}\NormalTok{])   }
+\FunctionTok{axis}\NormalTok{(}\DecValTok{1}\NormalTok{, }\AttributeTok{at=}\NormalTok{ticklocsx, }\AttributeTok{tck=}\FloatTok{0.01}\NormalTok{, }\AttributeTok{lab=}\NormalTok{F, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)    }
+\FunctionTok{axis}\NormalTok{(}\DecValTok{2}\NormalTok{, }\AttributeTok{at=}\NormalTok{ticklocsy, }\AttributeTok{tck=}\FloatTok{0.01}\NormalTok{, }\AttributeTok{lab=}\NormalTok{F, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{mtext}\NormalTok{(}\AttributeTok{text =}\NormalTok{ ticklabelsx, }\AttributeTok{side =} \DecValTok{1}\NormalTok{, }\AttributeTok{at=}\NormalTok{ticklocsx)   }
+\FunctionTok{mtext}\NormalTok{(}\AttributeTok{text =}\NormalTok{ ticklabelsy, }\AttributeTok{side =} \DecValTok{2}\NormalTok{, }\AttributeTok{at=}\NormalTok{ticklocsy, }\AttributeTok{line=}\FloatTok{0.2}\NormalTok{, }\AttributeTok{las=}\DecValTok{1}\NormalTok{)}
+\FunctionTok{title}\NormalTok{(}\AttributeTok{xlab=}\StringTok{"Target size (\% of adaptor)"}\NormalTok{, }\AttributeTok{col.lab=}\FunctionTok{rgb}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{), }\AttributeTok{line=}\FloatTok{1.2}\NormalTok{, }\AttributeTok{cex.lab=}\FloatTok{1.5}\NormalTok{)   }
+\FunctionTok{title}\NormalTok{(}\AttributeTok{ylab=}\StringTok{"Size shift (\%)"}\NormalTok{, }\AttributeTok{col.lab=}\FunctionTok{rgb}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{), }\AttributeTok{line=}\FloatTok{1.5}\NormalTok{, }\AttributeTok{cex.lab=}\FloatTok{1.5}\NormalTok{)}
+
+\FunctionTok{lines}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{12}\NormalTok{,}\DecValTok{12}\NormalTok{),}\FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{),}\AttributeTok{lty=}\DecValTok{2}\NormalTok{,}\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{datasubset }\OtherTok{\textless{}{-}}\NormalTok{ meansettingsdB[,}\DecValTok{3}\NormalTok{,,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]}\SpecialCharTok{{-}}\NormalTok{meansettingsdB[,}\DecValTok{1}\NormalTok{,,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{toplot }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(datasubset,}\DecValTok{2}\NormalTok{,mean)}
+\NormalTok{toplotSE }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(datasubset,}\DecValTok{2}\NormalTok{,sd)}\SpecialCharTok{/}\FunctionTok{sqrt}\NormalTok{(}\DecValTok{8}\NormalTok{)}
+\FunctionTok{arrows}\NormalTok{(propdB,toplot,}\AttributeTok{x1=}\NormalTok{propdB, }\AttributeTok{y1=}\NormalTok{toplot}\SpecialCharTok{{-}}\NormalTok{toplotSE, }\AttributeTok{length=}\FloatTok{0.015}\NormalTok{, }\AttributeTok{angle=}\DecValTok{90}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)  }
+\FunctionTok{arrows}\NormalTok{(propdB,toplot,}\AttributeTok{x1=}\NormalTok{propdB, }\AttributeTok{y1=}\NormalTok{toplot}\SpecialCharTok{+}\NormalTok{toplotSE, }\AttributeTok{length=}\FloatTok{0.015}\NormalTok{, }\AttributeTok{angle=}\DecValTok{90}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)  }
+\FunctionTok{lines}\NormalTok{(propdB,toplot,}\AttributeTok{lwd=}\DecValTok{3}\NormalTok{,}\AttributeTok{col=}\NormalTok{colpal[}\DecValTok{1}\NormalTok{])}
+\FunctionTok{points}\NormalTok{(propdB,toplot,}\AttributeTok{pch=}\DecValTok{21}\NormalTok{,}\AttributeTok{cex=}\DecValTok{2}\NormalTok{,}\AttributeTok{bg=}\NormalTok{colpal[}\DecValTok{1}\NormalTok{],}\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{datasubset }\OtherTok{\textless{}{-}}\NormalTok{ meansettingsdB[,}\DecValTok{3}\NormalTok{,,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{{-}}\NormalTok{meansettingsdB[,}\DecValTok{1}\NormalTok{,,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]}
+\NormalTok{toplot }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(datasubset,}\DecValTok{2}\NormalTok{,mean)}
+\NormalTok{toplotSE }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(datasubset,}\DecValTok{2}\NormalTok{,sd)}\SpecialCharTok{/}\FunctionTok{sqrt}\NormalTok{(}\DecValTok{8}\NormalTok{)}
+\FunctionTok{arrows}\NormalTok{(propdB,toplot,}\AttributeTok{x1=}\NormalTok{propdB, }\AttributeTok{y1=}\NormalTok{toplot}\SpecialCharTok{{-}}\NormalTok{toplotSE, }\AttributeTok{length=}\FloatTok{0.015}\NormalTok{, }\AttributeTok{angle=}\DecValTok{90}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)  }
+\FunctionTok{arrows}\NormalTok{(propdB,toplot,}\AttributeTok{x1=}\NormalTok{propdB, }\AttributeTok{y1=}\NormalTok{toplot}\SpecialCharTok{+}\NormalTok{toplotSE, }\AttributeTok{length=}\FloatTok{0.015}\NormalTok{, }\AttributeTok{angle=}\DecValTok{90}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)  }
+\FunctionTok{lines}\NormalTok{(propdB,toplot,}\AttributeTok{lwd=}\DecValTok{3}\NormalTok{,}\AttributeTok{col=}\NormalTok{colpal[}\DecValTok{2}\NormalTok{])}
+\FunctionTok{points}\NormalTok{(propdB,toplot,}\AttributeTok{pch=}\DecValTok{22}\NormalTok{,}\AttributeTok{cex=}\DecValTok{2}\NormalTok{,}\AttributeTok{bg=}\NormalTok{colpal[}\DecValTok{2}\NormalTok{],}\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)}
+
+\FunctionTok{text}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{,}\FloatTok{2.5}\NormalTok{,}\StringTok{\textquotesingle{}Aligned adaptor\textquotesingle{}}\NormalTok{,}\AttributeTok{cex=}\FloatTok{1.2}\NormalTok{,}\AttributeTok{pos=}\DecValTok{4}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{12}\NormalTok{, }\DecValTok{20}\SpecialCharTok{*}\FunctionTok{log10}\NormalTok{(}\FloatTok{1.4}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\StringTok{"1 deg"}\NormalTok{,}\StringTok{"2 deg"}\NormalTok{), }\AttributeTok{title=}\StringTok{\textquotesingle{}Adaptor size\textquotesingle{}}\NormalTok{, }
+       \AttributeTok{cex=}\DecValTok{1}\NormalTok{, }\AttributeTok{pt.cex=}\DecValTok{2}\NormalTok{, }\AttributeTok{pt.bg=}\NormalTok{colpal[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{], }\AttributeTok{pch=}\DecValTok{21}\SpecialCharTok{:}\DecValTok{22}\NormalTok{, }\AttributeTok{pt.lwd=}\DecValTok{2}\NormalTok{, }\AttributeTok{box.lwd=}\DecValTok{2}\NormalTok{)}
+
+\FunctionTok{invisible}\NormalTok{(}\FunctionTok{dev.off}\NormalTok{()) }\CommentTok{\# the invisible function prevents reporting success}
+\end{Highlighting}
+\end{Shaded}
+
+Notice that we have generated the figure but not displayed it yet. We can then load in and display the figure in the output:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{include\_graphics}\NormalTok{(}\StringTok{\textquotesingle{}Figures/datafigure.pdf\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics{Figures/datafigure} 
+
+}
+
+\caption{Summary of size adaptation data from Meese and Baker (2023).}\label{fig:datafig}
+\end{figure}
+
+The figure appears in the output document as Figure \ref{fig:datafig}. Where possible I guess we'll try and produce exactly the same figures as in the original manuscript that is provided by the authors (this will be much easier if they've used R to do the plotting!).
 
 \hypertarget{references}{%
 \section*{References}\label{references}}
@@ -498,6 +698,9 @@ MRI, manual analyses
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-Meese2023}{}}%
+Meese TS, Baker DH. 2023. Object image size is a fundamental coding dimension in human vision: New insights and model. \emph{Neuroscience} \textbf{514}:79--91. doi:\href{https://doi.org/10.1016/j.neuroscience.2023.01.025}{10.1016/j.neuroscience.2023.01.025}
+
 \leavevmode\vadjust pre{\hypertarget{ref-Peikert2021}{}}%
 Peikert A, Brandmaier AM. 2021. A reproducible data analysis workflow with {R} markdown, git, make, and docker. \emph{Quantitative and Computational Methods in Behavioral Sciences} \textbf{1}:e3763. doi:\href{https://doi.org/10.5964/qcmb.3763}{10.5964/qcmb.3763}
 
