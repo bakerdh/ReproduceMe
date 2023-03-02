@@ -160,7 +160,7 @@ osf_download(filelist[id,],'local/')
 
 ```
 
-Note that we should avoid repeatedly downloading files that are already present locally, for example by using an *if* statement as above. There are also functions in the *osfr* package to enable automated uploading of files, which I find more stable than the drag and drop web interface. In order to upload files (or download them from private repositories) you need to provide an authentication key. However it is possible to download files from any public repository without requiring any log in details or authentication (as above), so our markdown files should work on any machine with internet access.
+Note that we should avoid repeatedly downloading files that are already present locally, for example by using an *if* statement as above. There are also functions in the *osfr* package to enable automated uploading of files, which I find more stable than the drag and drop web interface. In order to upload files (or download them from private repositories) you need to provide an authentication key. However it is possible to download files from any public repository without requiring any log in details or authentication (as above), so our markdown files should work on any machine with internet access. There is also a Python package called [osfclient](https://osfclient.readthedocs.io/en/latest/index.html) that works in a similar way.
 
 ## Local file management
 
