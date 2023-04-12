@@ -138,7 +138,7 @@
 
 \title{Computational Reproducibility Cookbook}
 \author{Daniel H. Baker, University of York}
-\date{2023-02-23}
+\date{2023-04-12}
 
 \begin{document}
 \maketitle
@@ -284,7 +284,7 @@ The main thing we are likely to download is data for analysis, but we could also
 \end{Highlighting}
 \end{Shaded}
 
-Note that we should avoid repeatedly downloading files that are already present locally, for example by using an \emph{if} statement as above. There are also functions in the \emph{osfr} package to enable automated uploading of files, which I find more stable than the drag and drop web interface. In order to upload files (or download them from private repositories) you need to provide an authentication key. However it is possible to download files from any public repository without requiring any log in details or authentication (as above), so our markdown files should work on any machine with internet access.
+Note that we should avoid repeatedly downloading files that are already present locally, for example by using an \emph{if} statement as above. There are also functions in the \emph{osfr} package to enable automated uploading of files, which I find more stable than the drag and drop web interface. In order to upload files (or download them from private repositories) you need to provide an authentication key. However it is possible to download files from any public repository without requiring any log in details or authentication (as above), so our markdown files should work on any machine with internet access. There is also a Python package called \href{https://osfclient.readthedocs.io/en/latest/index.html}{osfclient} that works in a similar way.
 
 \hypertarget{local-file-management}{%
 \subsection{Local file management}\label{local-file-management}}
@@ -332,74 +332,10 @@ Notice how this might interact with the \emph{processdata} flag we talked about 
 
 For really complicated plots with irregular layouts, it's sometimes necessary to do things in a slightly different way, e.g.~by combining multiple postscript files and raster images at arbitrary locations. I explain how to do this in the plotting chapter (Ch 18) of my R book, which is available at: \url{https://eprints.whiterose.ac.uk/181926/}. And often in papers we need to generate a diagram in a different piece of software, like Adobe Illustrator. It's totally fine to import things like this as graphics, rather than generate them automatically.
 
-\hypertarget{package-management}{%
-\subsection{Package management}\label{package-management}}
-
-The package management system in R is excellent, in that most of what we might need is available from a single repository (\href{https://cran.r-project.org/}{CRAN}), and is stored consistently in a common library on the host computer. However package installation and activation is a little cumbersome. The \emph{install.packages()} function will force install packages even if they are already present on the computer, which wastes a lot of time if it happens each time the script is run. I use the following code to check which required packages are present, install those that are missing, and activate everything:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{packagelist }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}knitr\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}remotes\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}tictoc\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}R.matlab\textquotesingle{}}\NormalTok{) }\CommentTok{\# list of CRAN packages}
-
-\CommentTok{\# find which packages are missing and install them}
-\NormalTok{missingpackages }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%} \FunctionTok{installed.packages}\NormalTok{()[,}\DecValTok{1}\NormalTok{]]}
-\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(missingpackages)}\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{}\FunctionTok{install.packages}\NormalTok{(missingpackages)\}}
-
-\CommentTok{\# then activate all the packages with the library function}
-\NormalTok{toinstall }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\FunctionTok{which}\NormalTok{(}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%}\NormalTok{ (}\FunctionTok{.packages}\NormalTok{()))]}
-\FunctionTok{invisible}\NormalTok{(}\FunctionTok{lapply}\NormalTok{(toinstall,library,}\AttributeTok{character.only=}\ConstantTok{TRUE}\NormalTok{))}
-\end{Highlighting}
-\end{Shaded}
-
-However the above code will install the most recent package versions. Over time, packages get updated (along with the R language itself), and there is a risk that code will develop bugs as a consequence. An alternative approach is the \href{https://rstudio.github.io/renv/articles/renv.html}{\emph{renv}} package, which takes a snapshot of the precise package versions that are being used. This requires some minimal lines of code.
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Initialise an \emph{renv} `lock' file to store package information in:
-\end{enumerate}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{renv}\SpecialCharTok{::}\FunctionTok{init}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\tightlist
-\item
-  Once you have activated all the packages required for the project, take a snapshot and save it to the lock file:
-\end{enumerate}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{renv}\SpecialCharTok{::}\FunctionTok{snapshot}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{2}
-\tightlist
-\item
-  The above lines of code only need to be called when we first set up the project, after which they could be commented out in the script. If the lock file is included as part of the project, the environment can then be restored with:
-\end{enumerate}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{renv}\SpecialCharTok{::}\FunctionTok{restore}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
-
-This solution isn't perfect, for example it doesn't control the R version being used. However it does solve part of the problem of ensuring reproducibility. Ultimately we might attempt to wrap the entire R environment in a Docker container, but I haven't worked out how to do this quite yet.
-
 \hypertarget{python-chunks}{%
 \subsection{Python chunks}\label{python-chunks}}
 
-It is possible to include sections of Python code in an R markdown document. This might be useful if one needs to access Python libraries and toolboxes. It requires the \href{}{\emph{reticulate}} package to be available, through which it is possible to specify which Python version you wish to use on your machine (it must already have been installed). A python code chunk resembles an R code chunk, and is initiated by three reverse ticks followed by \texttt{\{python\}} (and terminated with three more reverse ticks). Within a python code chunk it is possible to import packages from the local python instance in the usual way, and conduct any Python analyses.
+It is possible to include sections of Python code in an R markdown document. This might be useful if one needs to access Python libraries and toolboxes. It requires the \href{https://CRAN.R-project.org/package=reticulate}{\emph{reticulate}} package to be available, through which it is possible to specify which Python version you wish to use on your machine (it must already have been installed). A python code chunk resembles an R code chunk, and is initiated by three reverse ticks followed by \texttt{\{python\}} (and terminated with three more reverse ticks). Within a python code chunk it is possible to import packages from the local python instance in the usual way, and conduct any Python analyses.
 
 The Python instance has a sandboxed area of memory that cannot directly access the variables in the R Environment. However a special R variable is created called \emph{py} that stores any Python variables as subfields. So a variable called \emph{pyvar} in the Python code can be accessed in R as \texttt{py\$pyvar}. Similarly, creating a new field of the \emph{py} variable, such as \texttt{py\$Rdata} will cause a variable called \emph{Rdata} to appear in the Python memory. In this way it is possible to pass information between R and Python. It is a little more clunky than having a shared memory, but presumably necessary for technical reasons (i.e.~to do with different data types). It is possible to do something similar for other languages, including Julia, C++, JavaScript, bash and SQL. I haven't tried this, but apparently it's also possible to use Octave in this way, which is an open source Matlab alternative. If we end up with some Matlab code that we can't translate to R, this might be a useful option.
 
@@ -487,6 +423,165 @@ Similarly we can reference figures by giving them a tag. For example the pyramid
 Github is a useful tool for version management and online code storage. It integrates well with both OSF and RStudio. If we set up a new public repository on the Github website, we can pull it down to our local computer in RStudio by choosing File: New Project. Select Version Control and then Git. It turns out that Github changed the way to interface with repositories, so much of the information online is out of date. The correct format for the repository URL is: \texttt{git@github.com:bakerdh/ReproduceMe.git}
 
 The files will download, and we can then make modifications and synchronise back to the repository by Committing and then Pushing in the Git tab (upper right pane in RStudio). There's a lot more that Github can do, but frankly I don't really understand it, and it's beyond what we'll need for this project.
+
+\hypertarget{package-management}{%
+\subsection{Package management}\label{package-management}}
+
+The package management system in R is excellent, in that most of what we might need is available from a single repository (\href{https://cran.r-project.org/}{CRAN}), and is stored consistently in a common library on the host computer. However package installation and activation is a little cumbersome. The \emph{install.packages()} function will force install packages even if they are already present on the computer, which wastes a lot of time if it happens each time the script is run. I use the following code to check which required packages are present, install those that are missing, and activate everything:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{packagelist }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}knitr\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}remotes\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}tictoc\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}R.matlab\textquotesingle{}}\NormalTok{) }\CommentTok{\# list of CRAN packages}
+
+\CommentTok{\# find which packages are missing and install them}
+\NormalTok{missingpackages }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%} \FunctionTok{installed.packages}\NormalTok{()[,}\DecValTok{1}\NormalTok{]]}
+\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(missingpackages)}\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{}\FunctionTok{install.packages}\NormalTok{(missingpackages)\}}
+
+\CommentTok{\# then activate all the packages with the library function}
+\NormalTok{toinstall }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\FunctionTok{which}\NormalTok{(}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%}\NormalTok{ (}\FunctionTok{.packages}\NormalTok{()))]}
+\FunctionTok{invisible}\NormalTok{(}\FunctionTok{lapply}\NormalTok{(toinstall,library,}\AttributeTok{character.only=}\ConstantTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+However the above code will install the most recent package versions. Over time, packages get updated (along with the R language itself), and there is a risk that code will develop bugs as a consequence. An alternative approach is the \href{https://rstudio.github.io/renv/articles/renv.html}{\emph{renv}} package, which takes a snapshot of the precise package versions that are being used. This requires some minimal lines of code.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Initialise an \emph{renv} `lock' file to store package information in:
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{renv}\SpecialCharTok{::}\FunctionTok{init}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Once you have activated all the packages required for the project, take a snapshot and save it to the lock file:
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{renv}\SpecialCharTok{::}\FunctionTok{snapshot}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  The above lines of code only need to be called when we first set up the project, after which they could be commented out in the script. If the lock file is included as part of the project, the environment can then be restored with:
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{renv}\SpecialCharTok{::}\FunctionTok{restore}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{docker-containers}{%
+\subsection{Docker containers}\label{docker-containers}}
+
+The \emph{renv} solution isn't perfect, for example it doesn't control the R version being used. A more comprehensive solution is to `containerise' the entire analysis environment, including the version of R and all packages required, and any other software (i.e.~\LaTeX{}, ghostscript etc.). The most popular solution for this is \href{https://www.docker.com/}{\emph{Docker}}, a system that permits specification of a sandboxed Linux kernel on which to build one's analysis. There are pre-built images that contain RStudio available from the \href{https://rocker-project.org/}{\emph{Rocker}} project, which makes some of the initial setup straightforward.
+
+To use Docker, we first need to download the Docker desktop client and install it. Note that this is not possible on some systems (such as at YNiC) because of access restrictions, and so I think that providing a Docker image should be in addition to the other things that we do (e.g.~using \emph{renv}), and not the only route to facilitate reproducibility. Next we generate a Dockerfile, which is a plaintext specification of how to build the image - in other words it instructs Docker about what software it needs to download. Here is an example Dockerfile (that can be downloaded from \href{https://github.com/bakerdh/SizeAdaptation/blob/d3c12cf0a7aa9e9ac82013c30c8b254344946c0e/docker/Dockerfile}{Github}):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\ExtensionTok{FROM}\NormalTok{ rocker/rstudio:4.2.2}
+
+\ExtensionTok{RUN}\NormalTok{ apt{-}get update }\AttributeTok{{-}qq}
+\ExtensionTok{RUN}\NormalTok{ apt{-}get }\AttributeTok{{-}y}\NormalTok{ install cmake}
+\ExtensionTok{RUN}\NormalTok{ apt{-}get }\AttributeTok{{-}y} \AttributeTok{{-}{-}no{-}install{-}recommends}\NormalTok{ install libglu1{-}mesa{-}dev}
+\ExtensionTok{RUN}\NormalTok{ apt{-}get }\AttributeTok{{-}y}\NormalTok{ install libxml2{-}dev}
+\ExtensionTok{RUN}\NormalTok{ apt{-}get }\AttributeTok{{-}y}\NormalTok{ install ghostscript}
+\ExtensionTok{RUN}\NormalTok{ apt{-}get }\AttributeTok{{-}y}\NormalTok{ install libxt{-}dev}
+\ExtensionTok{RUN}\NormalTok{ apt{-}get }\AttributeTok{{-}y}\NormalTok{ install git}
+
+\ExtensionTok{RUN}\NormalTok{ R }\AttributeTok{{-}e} \StringTok{\textquotesingle{}install.packages("remotes"); remotes::install\_version("car", version="3.1{-}1"); }
+\StringTok{remotes::install\_version("pracma", version="2.4.2"); }
+\StringTok{remotes::install\_version("pals", version="1.7"); }
+\StringTok{remotes::install\_version("grImport", version="0.9{-}5");}
+\StringTok{remotes::install\_version("tictoc", version="1.1");}
+\StringTok{remotes::install\_version("BayesFactor", version="0.9.12{-}4.4");}
+\StringTok{remotes::install\_version("ez", version="4.4{-}0"); }
+\StringTok{remotes::install\_version("renv", version="0.17.3");}
+\StringTok{remotes::install\_version("bookdown", version="0.32");}
+\StringTok{remotes::install\_version("knitr", version="1.42");}
+\StringTok{remotes::install\_version("markdown", version="1.5");}
+\StringTok{remotes::install\_version("tinytex", version="0.44"); }
+\StringTok{remotes::install\_version("osfr", version="0.2.9"); }
+\StringTok{tinytex::install\_tinytex()\textquotesingle{}}
+\end{Highlighting}
+\end{Shaded}
+
+The Dockerfile definition has three sections. The first line specifies the base image from the Rocker project - this is a specific version of their RStudio build (4.2.2). There are also builds with common packages pre-installed, such as rocker/tidyverse that will be useful for some projects. The second section specifies some non-R software packages that we might need, including \emph{git} and \emph{ghostscript}. These are downloaded using the \emph{apt-get} Linux command. Finally there is a list of \emph{R} packages to pre-install. Note that this is achieved using the \emph{remotes} package to specify a particular version of each package - the idea here is to `freeze' the environment so that subsequent package updates don't change the outcome. There is not much about this in the documentation on Docker/Rocker, as most people use these tools for other purposes. For example, the standard way to install R packages would be something like:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\ExtensionTok{RUN}\NormalTok{ install2.r car knitr BayesFactor tinytex osfr}
+\end{Highlighting}
+\end{Shaded}
+
+but this will download the latest versions of each package, which are not guaranteed to always work.
+
+Once the Dockerfile has been created, we build it using a terminal command, such as:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\ExtensionTok{docker}\NormalTok{ build }\AttributeTok{{-}t}\NormalTok{ sizebuild }\AttributeTok{{-}f}\NormalTok{ docker/Dockerfile .}
+\end{Highlighting}
+\end{Shaded}
+
+where \emph{sizebuild} is an arbitrary name we want to give the image, and \emph{docker/Dockerfile} is the path to the file on your computer. Running this will usually take some time the first time it is executed on a new system, as there is a lot of code to download, however most of the packages will be cached locally making subsequent executions faster. The end result will be an image called `sizebuild' that you can see within the Docker Desktop program.
+
+To actually use this image, we need to run it to create a `container', basically an active instance of the image that we can load data files into. I had originally hoped we might be able to preload data and code into an image, but this does not seem to be particularly practical because the internal volumes are wiped when the container gets created. We make the container by clicking the `play' icon in Docker Desktop and specifying some options:
+
+\begin{itemize}
+\tightlist
+\item
+  A container name, which can be anything sensible
+\item
+  A host port, which should generally be 8787
+\item
+  An Environment variable called PASSWORD with some arbitrary password value
+\end{itemize}
+
+The container then gets generated and appears in the Containers section of Docker Desktop. You can launch it by clicking on the host port, which should be 8787:8787, and it will connect to the RStudio instance in your browser. You will need to enter a username, which is `rstudio' by default, and the password you chose earlier.
+
+From this point on, everything happens within the familiar RStudio environment, which should have all the specified packages preinstalled. To get scripts and data into the container, the easiest thing is to clone an existing (public) Github repository, by using the Terminal pane of Rstudio (next to the Console tab) and entering something like:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\FunctionTok{git}\NormalTok{ clone https://github.com/bakerdh/SizeAdaptation.git}
+\end{Highlighting}
+\end{Shaded}
+
+This will download the repository and you can run the code. This integrates well with our methods for automatically downloading code and other files from OSF - they will all be stored locally in the container. However if the container is deleted they will be lost and have to be downloaded again.
+
+Note that at the time of writing there is a slight hurdle for anyone using a recent Mac with an Apple Silicon processor (i.e.~the M1 and M2 chips). These use an ARM architecture, for which frozen Rocker builds are not currently available for specific R versions. However it is possible to use a daily build by changing the first line of the Dockerfile to:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\ExtensionTok{FROM}\NormalTok{ rocker/rstudio:latest{-}daily}
+\end{Highlighting}
+\end{Shaded}
+
+This provides the latest RStudio build, and so it will change over time, but hopefully they will start providing frozen builds for this processor architecture soon. There is an emulation mode, but it doesn't seem to work properly for some reason - the image builds fine, but you can't actually log in to RStudio.
+
+Finally, there are a few systems around that try to do the same sort of thing remotely on a server. This avoids issues with processor architecture. I had a play with \href{https://mybinder.org}{mybinder.org} - this was super easy to set up, but then very slow to build, and couldn't load all of the packages I needed for a proper analysis. It might be useful for some projects though, and actually I successfully `binderised' this document at: \url{https://mybinder.org/v2/gh/bakerdh/ReproduceMe/HEAD}
 
 \hypertarget{modality-specific-issues}{%
 \subsection{Modality-specific issues}\label{modality-specific-issues}}
@@ -615,7 +710,7 @@ The data from this study are judgements of the perceived size of circles, before
 
 The results of the ANOVA are stored in the variable \emph{anovaoutput}, and the Bayes factors are in the variable \emph{allBFs} (and \emph{interactionbf}). We can index these to report the results as follows:
 
-A factorial (7 stimulus size \(\times\) 2 adaptor size) repeated measures ANOVA indicated that the main effect of relative stimulus size was significant (F(2.3,16.3) = 18.64, p \textless{} 0.0001, \(\eta^2_g\) = 0.54, \(log_{10}BF_{10}\) = 15.1), but there was no effect of absolute adaptor size (F(1,7) = 0.005, p = 0.95, \(\eta^2_g\) = 0, \(log_{10}BF_{10}\) = -0.7), nor any interaction (F(6,42) = 1.44, p = 0.22, \(\eta^2_g\) = 0.04, \(log_{10}BF_{10}\) = -0.8).
+A factorial (7 stimulus size \(\times\) 2 adaptor size) repeated measures ANOVA indicated that the main effect of relative stimulus size was significant (F(2.3,16.3) = 18.64, p \textless{} 0.0001, \(\eta^2_g\) = 0.54, \(log_{10}BF_{10}\) = 15), but there was no effect of absolute adaptor size (F(1,7) = 0.005, p = 0.95, \(\eta^2_g\) = 0, \(log_{10}BF_{10}\) = -0.7), nor any interaction (F(6,42) = 1.44, p = 0.22, \(\eta^2_g\) = 0.04, \(log_{10}BF_{10}\) = -0.8).
 
 You can check the markdown file to see how I have extracted the results of the statistical tests, but it is all done with in-line R snippets, and judicious use of the \emph{round} function. This is the critical thing - we don't manually type in the values from the ANOVA, they are automatically inserted into the text!
 

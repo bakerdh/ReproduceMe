@@ -2,12 +2,14 @@
 title: "Computational Reproducibility Cookbook"
 author: "Daniel H. Baker, University of York"
 date: "`r Sys.Date()`"
-output: 
+output:
   bookdown::pdf_document2:
     fig_caption: yes
     toc: no
     keep_tex: yes
   word_document: default
+  pdf_document:
+    toc: no
   html_document: default
 bibliography: references.bib
 csl: elife.csl
@@ -200,55 +202,9 @@ Notice how this might interact with the *processdata* flag we talked about above
 
 For really complicated plots with irregular layouts, it's sometimes necessary to do things in a slightly different way, e.g. by combining multiple postscript files and raster images at arbitrary locations. I explain how to do this in the plotting chapter (Ch 18) of my R book, which is available at: [https://eprints.whiterose.ac.uk/181926/](https://eprints.whiterose.ac.uk/181926/). And often in papers we need to generate a diagram in a different piece of software, like Adobe Illustrator. It's totally fine to import things like this as graphics, rather than generate them automatically.
 
-## Package management
-
-The package management system in R is excellent, in that most of what we might need is available from a single repository ([CRAN](https://cran.r-project.org/)), and is stored consistently in a common library on the host computer. However package installation and activation is a little cumbersome. The *install.packages()* function will force install packages even if they are already present on the computer, which wastes a lot of time if it happens each time the script is run. I use the following code to check which required packages are present, install those that are missing, and activate everything:
-
-```{r packageactivation, include=TRUE, eval=FALSE}
-
-packagelist <- c('knitr','remotes','tictoc','R.matlab') # list of CRAN packages
-
-# find which packages are missing and install them
-missingpackages <- packagelist[!packagelist %in% installed.packages()[,1]]
-if (length(missingpackages)>0){install.packages(missingpackages)}
-
-# then activate all the packages with the library function
-toinstall <- packagelist[which(!packagelist %in% (.packages()))]
-invisible(lapply(toinstall,library,character.only=TRUE))
-
-```
-
-However the above code will install the most recent package versions. Over time, packages get updated (along with the R language itself), and there is a risk that code will develop bugs as a consequence. An alternative approach is the [*renv*](https://rstudio.github.io/renv/articles/renv.html) package, which takes a snapshot of the precise package versions that are being used. This requires some minimal lines of code.
-
-1. Initialise an *renv* 'lock' file to store package information in:
-
-```{r renv1, include=TRUE, eval=FALSE}
-
-renv::init()
-
-```
-
-2. Once you have activated all the packages required for the project, take a snapshot and save it to the lock file:
-
-```{r renv2, include=TRUE, eval=FALSE}
-
-renv::snapshot()
-
-```
-
-3. The above lines of code only need to be called when we first set up the project, after which they could be commented out in the script. If the lock file is included as part of the project, the environment can then be restored with:
-
-```{r renv3, include=TRUE, eval=FALSE}
-
-renv::restore()
-
-```
-
-This solution isn't perfect, for example it doesn't control the R version being used. However it does solve part of the problem of ensuring reproducibility. Ultimately we might attempt to wrap the entire R environment in a Docker container, but I haven't worked out how to do this quite yet.
-
 ## Python chunks
 
-It is possible to include sections of Python code in an R markdown document. This might be useful if one needs to access Python libraries and toolboxes. It requires the [*reticulate*]() package to be available, through which it is possible to specify which Python version you wish to use on your machine (it must already have been installed). A python code chunk resembles an R code chunk, and is initiated by three reverse ticks followed by `{python}` (and terminated with three more reverse ticks). Within a python code chunk it is possible to import packages from the local python instance in the usual way, and conduct any Python analyses.
+It is possible to include sections of Python code in an R markdown document. This might be useful if one needs to access Python libraries and toolboxes. It requires the [*reticulate*](https://CRAN.R-project.org/package=reticulate) package to be available, through which it is possible to specify which Python version you wish to use on your machine (it must already have been installed). A python code chunk resembles an R code chunk, and is initiated by three reverse ticks followed by `{python}` (and terminated with three more reverse ticks). Within a python code chunk it is possible to import packages from the local python instance in the usual way, and conduct any Python analyses.
 
 The Python instance has a sandboxed area of memory that cannot directly access the variables in the R Environment. However a special R variable is created called *py* that stores any Python variables as subfields. So a variable called *pyvar* in the Python code can be accessed in R as `py$pyvar`. Similarly, creating a new field of the *py* variable, such as `py$Rdata` will cause a variable called *Rdata* to appear in the Python memory. In this way it is possible to pass information between R and Python. It is a little more clunky than having a shared memory, but presumably necessary for technical reasons (i.e. to do with different data types). It is possible to do something similar for other languages, including Julia, C++, JavaScript, bash and SQL. I haven't tried this, but apparently it's also possible to use Octave in this way, which is an open source Matlab alternative. If we end up with some Matlab code that we can't translate to R, this might be a useful option.
 
@@ -331,6 +287,137 @@ Similarly we can reference figures by giving them a tag. For example the pyramid
 Github is a useful tool for version management and online code storage. It integrates well with both OSF and RStudio. If we set up a new public repository on the Github website, we can pull it down to our local computer in RStudio by choosing File: New Project. Select Version Control and then Git. It turns out that Github changed the way to interface with repositories, so much of the information online is out of date. The correct format for the repository URL is: `git@github.com:bakerdh/ReproduceMe.git`
 
 The files will download, and we can then make modifications and synchronise back to the repository by Committing and then Pushing in the Git tab (upper right pane in RStudio). There's a lot more that Github can do, but frankly I don't really understand it, and it's beyond what we'll need for this project.
+
+## Package management
+
+The package management system in R is excellent, in that most of what we might need is available from a single repository ([CRAN](https://cran.r-project.org/)), and is stored consistently in a common library on the host computer. However package installation and activation is a little cumbersome. The *install.packages()* function will force install packages even if they are already present on the computer, which wastes a lot of time if it happens each time the script is run. I use the following code to check which required packages are present, install those that are missing, and activate everything:
+
+```{r packageactivation, include=TRUE, eval=FALSE}
+
+packagelist <- c('knitr','remotes','tictoc','R.matlab') # list of CRAN packages
+
+# find which packages are missing and install them
+missingpackages <- packagelist[!packagelist %in% installed.packages()[,1]]
+if (length(missingpackages)>0){install.packages(missingpackages)}
+
+# then activate all the packages with the library function
+toinstall <- packagelist[which(!packagelist %in% (.packages()))]
+invisible(lapply(toinstall,library,character.only=TRUE))
+
+```
+
+However the above code will install the most recent package versions. Over time, packages get updated (along with the R language itself), and there is a risk that code will develop bugs as a consequence. An alternative approach is the [*renv*](https://rstudio.github.io/renv/articles/renv.html) package, which takes a snapshot of the precise package versions that are being used. This requires some minimal lines of code.
+
+1. Initialise an *renv* 'lock' file to store package information in:
+
+```{r renv1, include=TRUE, eval=FALSE}
+
+renv::init()
+
+```
+
+2. Once you have activated all the packages required for the project, take a snapshot and save it to the lock file:
+
+```{r renv2, include=TRUE, eval=FALSE}
+
+renv::snapshot()
+
+```
+
+3. The above lines of code only need to be called when we first set up the project, after which they could be commented out in the script. If the lock file is included as part of the project, the environment can then be restored with:
+
+```{r renv3, include=TRUE, eval=FALSE}
+
+renv::restore()
+
+```
+
+## Docker containers
+
+The *renv* solution isn't perfect, for example it doesn't control the R version being used. A more comprehensive solution is to 'containerise' the entire analysis environment, including the version of R and all packages required, and any other software (i.e. \LaTeX{}, ghostscript etc.). The most popular solution for this is [*Docker*](https://www.docker.com/), a system that permits specification of a sandboxed Linux kernel on which to build one's analysis. There are pre-built images that contain RStudio available from the [*Rocker*](https://rocker-project.org/) project, which makes some of the initial setup straightforward.
+
+To use Docker, we first need to download the Docker desktop client and install it. Note that this is not possible on some systems (such as at YNiC) because of access restrictions, and so I think that providing a Docker image should be in addition to the other things that we do (e.g. using *renv*), and not the only route to facilitate reproducibility. Next we generate a Dockerfile, which is a plaintext specification of how to build the image - in other words it instructs Docker about what software it needs to download. Here is an example Dockerfile (that can be downloaded from [Github](https://github.com/bakerdh/SizeAdaptation/blob/d3c12cf0a7aa9e9ac82013c30c8b254344946c0e/docker/Dockerfile)):
+
+
+```{bash, eval = FALSE}
+
+FROM rocker/rstudio:4.2.2
+
+RUN apt-get update -qq
+RUN apt-get -y install cmake
+RUN apt-get -y --no-install-recommends install libglu1-mesa-dev
+RUN apt-get -y install libxml2-dev
+RUN apt-get -y install ghostscript
+RUN apt-get -y install libxt-dev
+RUN apt-get -y install git
+
+RUN R -e 'install.packages("remotes"); remotes::install_version("car", version="3.1-1"); 
+remotes::install_version("pracma", version="2.4.2"); 
+remotes::install_version("pals", version="1.7"); 
+remotes::install_version("grImport", version="0.9-5");
+remotes::install_version("tictoc", version="1.1");
+remotes::install_version("BayesFactor", version="0.9.12-4.4");
+remotes::install_version("ez", version="4.4-0"); 
+remotes::install_version("renv", version="0.17.3");
+remotes::install_version("bookdown", version="0.32");
+remotes::install_version("knitr", version="1.42");
+remotes::install_version("markdown", version="1.5");
+remotes::install_version("tinytex", version="0.44"); 
+remotes::install_version("osfr", version="0.2.9"); 
+tinytex::install_tinytex()'
+
+
+```
+
+The Dockerfile definition has three sections. The first line specifies the base image from the Rocker project - this is a specific version of their RStudio build (4.2.2). There are also builds with common packages pre-installed, such as rocker/tidyverse that will be useful for some projects. The second section specifies some non-R software packages that we might need, including *git* and *ghostscript*. These are downloaded using the *apt-get* Linux command. Finally there is a list of *R* packages to pre-install. Note that this is achieved using the *remotes* package to specify a particular version of each package - the idea here is to 'freeze' the environment so that subsequent package updates don't change the outcome. There is not much about this in the documentation on Docker/Rocker, as most people use these tools for other purposes. For example, the standard way to install R packages would be something like:
+
+```{bash, eval = FALSE}
+
+RUN install2.r car knitr BayesFactor tinytex osfr
+
+```
+
+but this will download the latest versions of each package, which are not guaranteed to always work.
+
+Once the Dockerfile has been created, we build it using a terminal command, such as:
+
+```{bash, eval = FALSE}
+
+docker build -t sizebuild -f docker/Dockerfile .
+
+```
+
+where *sizebuild* is an arbitrary name we want to give the image, and *docker/Dockerfile* is the path to the file on your computer. Running this will usually take some time the first time it is executed on a new system, as there is a lot of code to download, however most of the packages will be cached locally making subsequent executions faster. The end result will be an image called 'sizebuild' that you can see within the Docker Desktop program.
+
+To actually use this image, we need to run it to create a 'container', basically an active instance of the image that we can load data files into. I had originally hoped we might be able to preload data and code into an image, but this does not seem to be particularly practical because the internal volumes are wiped when the container gets created. We make the container by clicking the 'play' icon in Docker Desktop and specifying some options:
+
+- A container name, which can be anything sensible
+- A host port, which should generally be 8787
+- An Environment variable called PASSWORD with some arbitrary password value
+
+The container then gets generated and appears in the Containers section of Docker Desktop. You can launch it by clicking on the host port, which should be 8787:8787, and it will connect to the RStudio instance in your browser. You will need to enter a username, which is 'rstudio' by default, and the password you chose earlier.
+
+From this point on, everything happens within the familiar RStudio environment, which should have all the specified packages preinstalled. To get scripts and data into the container, the easiest thing is to clone an existing (public) Github repository, by using the Terminal pane of Rstudio (next to the Console tab) and entering something like:
+
+```{bash, eval = FALSE}
+
+git clone https://github.com/bakerdh/SizeAdaptation.git
+
+```
+
+This will download the repository and you can run the code. This integrates well with our methods for automatically downloading code and other files from OSF - they will all be stored locally in the container. However if the container is deleted they will be lost and have to be downloaded again.
+
+Note that at the time of writing there is a slight hurdle for anyone using a recent Mac with an Apple Silicon processor (i.e. the M1 and M2 chips). These use an ARM architecture, for which frozen Rocker builds are not currently available for specific R versions. However it is possible to use a daily build by changing the first line of the Dockerfile to:
+
+```{bash, eval = FALSE}
+
+FROM rocker/rstudio:latest-daily
+
+```
+
+This provides the latest RStudio build, and so it will change over time, but hopefully they will start providing frozen builds for this processor architecture soon. There is an emulation mode, but it doesn't seem to work properly for some reason - the image builds fine, but you can't actually log in to RStudio.
+
+Finally, there are a few systems around that try to do the same sort of thing remotely on a server. This avoids issues with processor architecture. I had a play with [mybinder.org](https://mybinder.org) - this was super easy to set up, but then very slow to build, and couldn't load all of the packages I needed for a proper analysis. It might be useful for some projects though, and actually I successfully 'binderised' this document at: [https://mybinder.org/v2/gh/bakerdh/ReproduceMe/HEAD](https://mybinder.org/v2/gh/bakerdh/ReproduceMe/HEAD)
 
 ## Modality-specific issues
 
