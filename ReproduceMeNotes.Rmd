@@ -20,6 +20,9 @@ csl: elife.csl
 knitr::opts_chunk$set(echo = TRUE)
 if (!dir.exists('local/')){dir.create('local')}
 
+# added to facilitate running on mybinder.org:
+if(tinytex::is_tinytex()==FALSE){tinytex::install_tinytex()}
+
 ```
 
 # Intro
@@ -505,7 +508,7 @@ for (size in 1:2){
 }
 
 # check we have the ez and BayesFactor packages:
-packagelist <- c('ez','BayesFactor','pals') # list of CRAN packages
+packagelist <- c('ez','BayesFactor') # list of CRAN packages
 # find which packages are missing and install them
 missingpackages <- packagelist[!packagelist %in% installed.packages()[,1]]
 if (length(missingpackages)>0){install.packages(missingpackages)}
@@ -544,7 +547,7 @@ if (!dir.exists('Figures/')){dir.create('Figures')}
 
 pdf('Figures/datafigure.pdf', bg="transparent", height = 5, width = 5)
 
-colpal <- brewer.pastel1(9)
+colpal <- c("#FBB4AE", "#B3CDE3", "#CCEBC5", "#DECBE4", "#FED9A6", "#FFFFCC", "#E5D8BD", "#FDDAEC", "#F2F2F2")
 
 plotlims <- c(-12,12,-3,3) 
 ticklocsx <- seq(-12,12,6)   
