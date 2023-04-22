@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  analysis:
+    #build: 
+    #  dockerfile: .docker/Dockerfile
+    #  context: .
+    container_name: bakerdh/ReproduceMe
+    image: bakerdh/ReproduceMe
+    volumes:
+      - .:/home/rstudio
+    environment:
+      DISABLE_AUTH: 'true'
+    working_dir: /home/rstudio
+    command: make analysis-docker
+  download:
+    container_name: bakerdh/ReproduceMe:download
+    image: bakerdh/ReproduceMe:download
+    volumes:
+      - .:/home/rstudio
+    environment:
+      DISABLE_AUTH: 'true'
+    working_dir: /home/rstudio
+    command: make download-docker
+  document:
+    container_name: bakerdh/ReproduceMe:knit
+    image: bakerdh/ReproduceMe:knit
+    volumes:
+      - .:/home/rstudio
+    environment:
+      DISABLE_AUTH: 'true'
+    working_dir: /home/rstudio
+    command: make document-docker
