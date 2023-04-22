@@ -22,7 +22,7 @@ if (!dir.exists('local/')){dir.create('local')}
 
 # added to facilitate running on mybinder.org:
 if(tinytex::is_tinytex()==FALSE){tinytex::install_tinytex()}
-
+ 
 ```
 
 # Intro
