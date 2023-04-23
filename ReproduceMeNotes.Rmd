@@ -18,7 +18,6 @@ csl: elife.csl
 ```{r setup, include=FALSE}
 
 packagelist <- c('knitr','remotes','tictoc','R.matlab','osfr','grDevices','ez','BayesFactor') # list of CRAN packages
-
 # find which packages are missing and install them
 missingpackages <- packagelist[!packagelist %in% installed.packages()[,1]]
 if (length(missingpackages)>0){install.packages(missingpackages)}
@@ -33,7 +32,7 @@ if (!dir.exists('local/')){dir.create('local')}
 if (!dir.exists('Figures/')){dir.create('Figures')}
 
 # added to facilitate running on mybinder.org:
-if(tinytex::is_tinytex()==FALSE){tinytex::install_tinytex()}
+# if(tinytex::is_tinytex()==FALSE){tinytex::install_tinytex()}
  
 ```
 
