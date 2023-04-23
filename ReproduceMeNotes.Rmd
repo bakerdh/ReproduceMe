@@ -432,6 +432,8 @@ This provides the latest RStudio build, and so it will change over time, but hop
 
 Finally, there are a few systems around that try to do the same sort of thing remotely on a server. This avoids issues with processor architecture. I had a play with [mybinder.org](https://mybinder.org) - this was super easy to set up, but then very slow to build, and couldn't load all of the packages I needed for a proper analysis. It might be useful for some projects though, and actually I successfully 'binderised' this document at: [https://mybinder.org/v2/gh/bakerdh/ReproduceMe/HEAD](https://mybinder.org/v2/gh/bakerdh/ReproduceMe/HEAD)
 
+It's also possible to use Github Actions to run the entire pipeline on a server (without using the RStudio interface), and storing the output as part of the github repository. This involves putting some text files in specific places in the repository, and changing a few permissions and other settings. Again, it's been done for this repository, and the resulting pdf is available at: [https://bakerdh.github.io/ReproduceMe/ReproduceMeNotes.pdf](https://bakerdh.github.io/ReproduceMe/ReproduceMeNotes.pdf)
+
 ## Modality-specific issues
 
 There are some analyses that are not amenable to computational reproducibility. In particular, analyses that involve a manual component, such as coding videos, or in MRI analysis identifying fiducial points and drawing retinotopic regions of interest, often cannot be automated. We need to be flexible and creative with these sorts of situations, and think about how best to integrate the manual components into a reproducible pipeline. This might involve creating a file to store the manually coded values which is then loaded in for the rest of the analysis.
