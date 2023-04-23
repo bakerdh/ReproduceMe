@@ -1,0 +1,10 @@
+#!/bin/bash
+
+mkdir build
+cp *.pdf build/
+
+cd build
+echo "<a href=\"$(ls *.pdf)\">Document</a>" > index.html
+touch .nobuild
+
+cd ..

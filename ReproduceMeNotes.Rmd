@@ -17,8 +17,20 @@ csl: elife.csl
 
 ```{r setup, include=FALSE}
 
+packagelist <- c('knitr','remotes','tictoc','R.matlab','osfr','grDevices','ez','BayesFactor') # list of CRAN packages
+
+# find which packages are missing and install them
+missingpackages <- packagelist[!packagelist %in% installed.packages()[,1]]
+if (length(missingpackages)>0){install.packages(missingpackages)}
+
+# then activate all the packages with the library function
+toinstall <- packagelist[which(!packagelist %in% (.packages()))]
+invisible(lapply(toinstall,library,character.only=TRUE))
+
+
 knitr::opts_chunk$set(echo = TRUE)
 if (!dir.exists('local/')){dir.create('local')}
+if (!dir.exists('Figures/')){dir.create('Figures')}
 
 # added to facilitate running on mybinder.org:
 if(tinytex::is_tinytex()==FALSE){tinytex::install_tinytex()}
@@ -340,7 +352,6 @@ renv::restore()
 The *renv* solution isn't perfect, for example it doesn't control the R version being used. A more comprehensive solution is to 'containerise' the entire analysis environment, including the version of R and all packages required, and any other software (i.e. \LaTeX{}, ghostscript etc.). The most popular solution for this is [*Docker*](https://www.docker.com/), a system that permits specification of a sandboxed Linux kernel on which to build one's analysis. There are pre-built images that contain RStudio available from the [*Rocker*](https://rocker-project.org/) project, which makes some of the initial setup straightforward.
 
 To use Docker, we first need to download the Docker desktop client and install it. Note that this is not possible on some systems (such as at YNiC) because of access restrictions, and so I think that providing a Docker image should be in addition to the other things that we do (e.g. using *renv*), and not the only route to facilitate reproducibility. Next we generate a Dockerfile, which is a plaintext specification of how to build the image - in other words it instructs Docker about what software it needs to download. Here is an example Dockerfile (that can be downloaded from [Github](https://github.com/bakerdh/SizeAdaptation/blob/d3c12cf0a7aa9e9ac82013c30c8b254344946c0e/docker/Dockerfile)):
-
 
 ```{bash, eval = FALSE}
 
