@@ -4,8 +4,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-    container_name: bakerdh/ReproduceMe:knit
-    image: bakerdh/ReproduceMe:knit
+    container_name: bakerdh/reproduceme:knit
+    image: bakerdh/reproduceme:knit
     volumes:
       - .:/home/rstudio
     environment:
