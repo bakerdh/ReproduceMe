@@ -138,7 +138,7 @@
 
 \title{Computational Reproducibility Cookbook}
 \author{Daniel H. Baker, University of York}
-\date{2023-04-12}
+\date{2023-04-26}
 
 \begin{document}
 \maketitle
@@ -175,7 +175,7 @@ Computational reproducibility can be as simple as posting a script and data onli
 
 \textbf{Level 3} - a single script automatically downloads and analyses all raw data, generates all tables and figures, and produces a pdf of the entire manuscript (note that this script may execute other scripts, e.g.~in different programming languages). This is a more impressive solution, as it is clear precisely where all of the values reported in the paper have come from, and how the figures were constructed. It can be substantially more work to get to this stage, but if the paper is already written then converting to an executable format is largely procedural. The journal \href{https://elifesciences.org/}{eLife} piloted something along these lines a few years ago, though it seems to have been forgotten about now.
 
-\textbf{Level 4} - all code is embedded in a Docker container (or similar) that includes the software required to run (e.g.~specific package versions, and versions of the programming environment). This would be extremely technically challenging to do from scratch. However fortunately there are some useful tools already available. The \href{https://rocker-project.org/}{Rocker} project provides standard Docker containers for R studio, which can be downloaded and used as a wrapper for the entire computational environment. I have not tried doing this yet, but there is plenty of documentation, and also a useful paper by Peikert and Brandmaier (2021) that explains how to go about it. A less extreme version is to use the \href{https://rstudio.github.io/renv/articles/renv.html}{\emph{renv}} package to manage package versions in R (more on this below).
+\textbf{Level 4} - all code is embedded in a Docker container (or similar) that includes the software required to run (e.g.~specific package versions, and versions of the programming environment). This would be extremely technically challenging to do from scratch. However fortunately there are some useful tools already available. The \href{https://rocker-project.org/}{Rocker} project provides standard Docker containers for R studio, which can be downloaded and used as a wrapper for the entire computational environment (see Peikert and Brandmaier, 2021). A less extreme version is to use the \href{https://rstudio.github.io/renv/articles/renv.html}{\emph{renv}} package to manage package versions in R (more on all this below).
 
 Discussions about which level to aim for should be had with the study authors before work begins on making materials reproducible. It is always easier to program something when the goal is clear, and there may be idiosyncracies specific to an individual study that means that Level 3 or 4 is not practical. Sometimes there are also restrictions on sharing of raw data (e.g.~where this could potentially be used to identify a participant), and in such cases we might aim for reproducibility based on preprocessed or de-identified data. All of this is totally fine - for this pilot project our goal is simply to make things more reproducible than Level 0, so we need to be pragmatic rather than puritanical.
 
@@ -185,7 +185,7 @@ Discussions about which level to aim for should be had with the study authors be
 \hypertarget{r-markdown-is-really-good}{%
 \subsection{\texorpdfstring{\emph{R Markdown} is really good}{R Markdown is really good}}\label{r-markdown-is-really-good}}
 
-\href{https://www.markdownguide.org/}{Markdown} is a generic convention for document formatting. R Markdown takes this basic concept and integrates it into the R environment. This means you can produce a single script that contains both text and computer code. When the script is executed the code runs too, meaning that analyses can be conducted, and an output document is generated. It is possible to automate all parts of an analysis pipeline in this way, with different sections of the code importing and processing the data, generating figures, and formatting the output in the style of a paper. You can then `knit' the markdown file to a variety of formats including pdf, Word documents, html and epub. Similar systems exist for other programming languages, including \href{https://jupyter.org/}{Jupyter notebooks} for Python, and \href{https://uk.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html}{Matlab live scripts}. We now have several examples of full papers written in R Markdown, available at the following repositories (these are clickable hyperlinks):
+\href{https://www.markdownguide.org/}{Markdown} is a generic convention for document formatting that is widely used in web page design. R Markdown takes this basic concept and integrates it into the R environment. This means you can produce a single script that contains both text and computer code. When the script is executed the code runs too, meaning that analyses can be conducted, and an output document is generated. It is possible to automate all parts of an analysis pipeline in this way, with different sections of the code importing and processing the data, generating figures, and formatting the output in the style of a paper. You can then `knit' the markdown file to a variety of formats including pdf, Word documents, html and epub. Similar systems exist for other programming languages, including \href{https://jupyter.org/}{Jupyter notebooks} for Python, \href{https://uk.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html}{Matlab live scripts}, and \href{https://quarto.org/}{Quarto}, a multi-language successor to R markdown. We now have several examples of full papers written in R Markdown, available at the following repositories (these are clickable hyperlinks):
 
 \href{https://github.com/bakerdh/FourierStats}{Baker (2021)}
 
@@ -583,6 +583,8 @@ This provides the latest RStudio build, and so it will change over time, but hop
 
 Finally, there are a few systems around that try to do the same sort of thing remotely on a server. This avoids issues with processor architecture. I had a play with \href{https://mybinder.org}{mybinder.org} - this was super easy to set up, but then very slow to build, and couldn't load all of the packages I needed for a proper analysis. It might be useful for some projects though, and actually I successfully `binderised' this document at: \url{https://mybinder.org/v2/gh/bakerdh/ReproduceMe/HEAD}
 
+It's also possible to use Github Actions to run the entire pipeline on a server (without using the RStudio interface), and storing the output as part of the github repository. This involves putting some text files in specific places in the repository, and changing a few permissions and other settings. Again, it's been done for this repository, and the resulting pdf is available at: \url{https://bakerdh.github.io/ReproduceMe/ReproduceMeNotes.pdf}
+
 \hypertarget{modality-specific-issues}{%
 \subsection{Modality-specific issues}\label{modality-specific-issues}}
 
@@ -683,7 +685,7 @@ The data from this study are judgements of the perceived size of circles, before
 \NormalTok{\}}
 
 \CommentTok{\# check we have the ez and BayesFactor packages:}
-\NormalTok{packagelist }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}ez\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}BayesFactor\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}pals\textquotesingle{}}\NormalTok{) }\CommentTok{\# list of CRAN packages}
+\NormalTok{packagelist }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}ez\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}BayesFactor\textquotesingle{}}\NormalTok{) }\CommentTok{\# list of CRAN packages}
 \CommentTok{\# find which packages are missing and install them}
 \NormalTok{missingpackages }\OtherTok{\textless{}{-}}\NormalTok{ packagelist[}\SpecialCharTok{!}\NormalTok{packagelist }\SpecialCharTok{\%in\%} \FunctionTok{installed.packages}\NormalTok{()[,}\DecValTok{1}\NormalTok{]]}
 \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(missingpackages)}\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{}\FunctionTok{install.packages}\NormalTok{(missingpackages)\}}
@@ -710,7 +712,7 @@ The data from this study are judgements of the perceived size of circles, before
 
 The results of the ANOVA are stored in the variable \emph{anovaoutput}, and the Bayes factors are in the variable \emph{allBFs} (and \emph{interactionbf}). We can index these to report the results as follows:
 
-A factorial (7 stimulus size \(\times\) 2 adaptor size) repeated measures ANOVA indicated that the main effect of relative stimulus size was significant (F(2.3,16.3) = 18.64, p \textless{} 0.0001, \(\eta^2_g\) = 0.54, \(log_{10}BF_{10}\) = 15), but there was no effect of absolute adaptor size (F(1,7) = 0.005, p = 0.95, \(\eta^2_g\) = 0, \(log_{10}BF_{10}\) = -0.7), nor any interaction (F(6,42) = 1.44, p = 0.22, \(\eta^2_g\) = 0.04, \(log_{10}BF_{10}\) = -0.8).
+A factorial (7 stimulus size \(\times\) 2 adaptor size) repeated measures ANOVA indicated that the main effect of relative stimulus size was significant (F(2.3,16.3) = 18.64, p \textless{} 0.0001, \(\eta^2_g\) = 0.54, \(log_{10}BF_{10}\) = 15.1), but there was no effect of absolute adaptor size (F(1,7) = 0.005, p = 0.95, \(\eta^2_g\) = 0, \(log_{10}BF_{10}\) = -0.7), nor any interaction (F(6,42) = 1.44, p = 0.22, \(\eta^2_g\) = 0.04, \(log_{10}BF_{10}\) = -0.8).
 
 You can check the markdown file to see how I have extracted the results of the statistical tests, but it is all done with in-line R snippets, and judicious use of the \emph{round} function. This is the critical thing - we don't manually type in the values from the ANOVA, they are automatically inserted into the text!
 
@@ -725,7 +727,7 @@ Finally we can create a figure to summarise the results as follows:
 
 \FunctionTok{pdf}\NormalTok{(}\StringTok{\textquotesingle{}Figures/datafigure.pdf\textquotesingle{}}\NormalTok{, }\AttributeTok{bg=}\StringTok{"transparent"}\NormalTok{, }\AttributeTok{height =} \DecValTok{5}\NormalTok{, }\AttributeTok{width =} \DecValTok{5}\NormalTok{)}
 
-\NormalTok{colpal }\OtherTok{\textless{}{-}} \FunctionTok{brewer.pastel1}\NormalTok{(}\DecValTok{9}\NormalTok{)}
+\NormalTok{colpal }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"\#FBB4AE"}\NormalTok{, }\StringTok{"\#B3CDE3"}\NormalTok{, }\StringTok{"\#CCEBC5"}\NormalTok{, }\StringTok{"\#DECBE4"}\NormalTok{, }\StringTok{"\#FED9A6"}\NormalTok{, }\StringTok{"\#FFFFCC"}\NormalTok{, }\StringTok{"\#E5D8BD"}\NormalTok{, }\StringTok{"\#FDDAEC"}\NormalTok{, }\StringTok{"\#F2F2F2"}\NormalTok{)}
 
 \NormalTok{plotlims }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{12}\NormalTok{,}\DecValTok{12}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{) }
 \NormalTok{ticklocsx }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{12}\NormalTok{,}\DecValTok{12}\NormalTok{,}\DecValTok{6}\NormalTok{)   }
