@@ -138,7 +138,7 @@
 
 \title{Computational Reproducibility Cookbook}
 \author{Daniel H. Baker, University of York}
-\date{2023-04-26}
+\date{2023-05-20}
 
 \begin{document}
 \maketitle
@@ -261,7 +261,7 @@ The first thing we need to do is index the root repository and see what files it
 ##  8 MovieS4.mp4               5ec96f53aeeb6d00ec095330 <named list [3]>
 ##  9 MovieS3.mp4               5ec96f53aeeb6d00eb08adc0 <named list [3]>
 ## 10 MovieS1.mp4               5ec96f53aeeb6d00e408ec72 <named list [3]>
-## # ... with 23 more rows
+## # i 23 more rows
 \end{verbatim}
 
 We can then download any of the files we might need, for example this line of code will donwload the first file in the list:
@@ -583,7 +583,7 @@ This provides the latest RStudio build, and so it will change over time, but hop
 
 Finally, there are a few systems around that try to do the same sort of thing remotely on a server. This avoids issues with processor architecture. I had a play with \href{https://mybinder.org}{mybinder.org} - this was super easy to set up, but then very slow to build, and couldn't load all of the packages I needed for a proper analysis. It might be useful for some projects though, and actually I successfully `binderised' this document at: \url{https://mybinder.org/v2/gh/bakerdh/ReproduceMe/HEAD}
 
-It's also possible to use Github Actions to run the entire pipeline on a server (without using the RStudio interface), and storing the output as part of the github repository. This involves putting some text files in specific places in the repository, and changing a few permissions and other settings. Again, it's been done for this repository, and the resulting pdf is available at: \url{https://bakerdh.github.io/ReproduceMe/ReproduceMeNotes.pdf}
+It's also possible to use Github Actions to run the entire pipeline on a server (without using the RStudio interface), and storing the output as part of the github repository. This involves putting some text files in specific places in the repository, and changing a few permissions and other settings. Again, it's been done for this repository, and the pdf version of the document has been auto-generated.
 
 \hypertarget{modality-specific-issues}{%
 \subsection{Modality-specific issues}\label{modality-specific-issues}}
