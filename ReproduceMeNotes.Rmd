@@ -3,14 +3,14 @@ title: "Computational Reproducibility Cookbook"
 author: "Daniel H. Baker, University of York"
 date: "`r Sys.Date()`"
 output:
-  html_document: default
-  word_document: default
-  pdf_document:
-    toc: no
   bookdown::pdf_document2:
     fig_caption: yes
     toc: no
     keep_tex: yes
+  word_document: default
+  pdf_document:
+    toc: no
+  html_document: default
 bibliography: references.bib
 csl: elife.csl
 ---
